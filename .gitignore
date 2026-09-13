@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Secretos: NUNCA al repositorio
+.env
+.env.local
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Builds nativos
+*.apk
+*.aab
+*.ipa
+android/app/build/
+ios/build/
+
+# Sistema operativo / editor
+.DS_Store
+*.log
+.vscode/
