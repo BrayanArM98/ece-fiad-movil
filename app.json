@@ -32,6 +32,14 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "ECE-FIAD usa la cámara para adjuntar fotografías a la evolución del paciente.",
+          "photosPermission": "ECE-FIAD accede a tu galería para adjuntar fotografías a la evolución del paciente."
+        }
       ]
     ],
     "experiments": {
