@@ -6,6 +6,7 @@ import { Boton } from '@/components/Boton';
 import { EncabezadoPaciente } from '@/components/EncabezadoPaciente';
 import { Cargando, MensajePantalla } from '@/components/EstadosPantalla';
 import { TarjetaEvolucion } from '@/components/TarjetaEvolucion';
+import { VisorFoto } from '@/components/VisorFoto';
 import { colores } from '@/theme/colores';
 import { useHistorialViewModel } from '@/viewmodels/useHistorialViewModel';
 
@@ -51,58 +52,63 @@ export default function HistorialPacienteScreen() {
   const historia = historial.historia;
 
   return (
-    <FlatList
-      style={styles.pantalla}
-      contentContainerStyle={styles.contenido}
-      data={historial.evoluciones}
-      keyExtractor={(evolucion) => String(evolucion.id)}
-      renderItem={({ item }) => (
-        <TarjetaEvolucion
-          evolucion={item}
-          expandida={vm.expandida === item.id}
-          onPress={() => vm.alternarEvolucion(item.id)}
-        />
-      )}
-      ItemSeparatorComponent={() => <View style={styles.separador} />}
-      ListHeaderComponent={
-        <View style={styles.cabecera}>
-          <EncabezadoPaciente paciente={paciente} />
-
-          <View style={[styles.alergias, !vm.tieneAlergias && styles.sinAlergias]}>
-            <Ionicons
-              name={vm.tieneAlergias ? 'warning' : 'checkmark-circle-outline'}
-              size={20}
-              color={vm.tieneAlergias ? colores.error : colores.textoSecundario}
-            />
-            <View style={styles.textoAlergias}>
-              <Text style={[styles.tituloAlergias, !vm.tieneAlergias && styles.tituloSinAlergias]}>Alergias</Text>
-              <Text style={styles.valor}>{vm.alergiasTexto}</Text>
-            </View>
-          </View>
-
-          <View style={styles.tarjeta}>
-            <Text style={styles.etiqueta}>Antecedentes personales</Text>
-            <Text style={styles.valor}>{historia.antecedentesPersonales || 'Sin registrar'}</Text>
-            <Text style={styles.etiqueta}>Antecedentes familiares</Text>
-            <Text style={styles.valor}>{historia.antecedentesFamiliares || 'Sin registrar'}</Text>
-          </View>
-
-          <View style={styles.tituloEvoluciones}>
-            <Text style={styles.subtitulo}>Evoluciones ({historial.totalEvoluciones})</Text>
-          </View>
-          <Boton
-            titulo="Nueva evolución"
-            onPress={() =>
-              router.push({
-                pathname: '/medico/evolucion/nueva',
-                params: { historiaId: String(historia.id), pacienteId: String(paciente.id) },
-              })
-            }
+    <>
+      <FlatList
+        style={styles.pantalla}
+        contentContainerStyle={styles.contenido}
+        data={historial.evoluciones}
+        keyExtractor={(evolucion) => String(evolucion.id)}
+        renderItem={({ item }) => (
+          <TarjetaEvolucion
+            evolucion={item}
+            fotos={vm.fotosDe(item.id)}
+            expandida={vm.expandida === item.id}
+            onPress={() => vm.alternarEvolucion(item.id)}
+            onVerFoto={vm.verFoto}
           />
-        </View>
-      }
-      ListEmptyComponent={<Text style={styles.vacio}>Este paciente aún no tiene evoluciones registradas</Text>}
-    />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separador} />}
+        ListHeaderComponent={
+          <View style={styles.cabecera}>
+            <EncabezadoPaciente paciente={paciente} />
+
+            <View style={[styles.alergias, !vm.tieneAlergias && styles.sinAlergias]}>
+              <Ionicons
+                name={vm.tieneAlergias ? 'warning' : 'checkmark-circle-outline'}
+                size={20}
+                color={vm.tieneAlergias ? colores.error : colores.textoSecundario}
+              />
+              <View style={styles.textoAlergias}>
+                <Text style={[styles.tituloAlergias, !vm.tieneAlergias && styles.tituloSinAlergias]}>Alergias</Text>
+                <Text style={styles.valor}>{vm.alergiasTexto}</Text>
+              </View>
+            </View>
+
+            <View style={styles.tarjeta}>
+              <Text style={styles.etiqueta}>Antecedentes personales</Text>
+              <Text style={styles.valor}>{historia.antecedentesPersonales || 'Sin registrar'}</Text>
+              <Text style={styles.etiqueta}>Antecedentes familiares</Text>
+              <Text style={styles.valor}>{historia.antecedentesFamiliares || 'Sin registrar'}</Text>
+            </View>
+
+            <View style={styles.tituloEvoluciones}>
+              <Text style={styles.subtitulo}>Evoluciones ({historial.totalEvoluciones})</Text>
+            </View>
+            <Boton
+              titulo="Nueva evolución"
+              onPress={() =>
+                router.push({
+                  pathname: '/medico/evolucion/nueva',
+                  params: { historiaId: String(historia.id), pacienteId: String(paciente.id) },
+                })
+              }
+            />
+          </View>
+        }
+        ListEmptyComponent={<Text style={styles.vacio}>Este paciente aún no tiene evoluciones registradas</Text>}
+      />
+      <VisorFoto uri={vm.fotoAbierta} onCerrar={vm.cerrarFoto} />
+    </>
   );
 }
 

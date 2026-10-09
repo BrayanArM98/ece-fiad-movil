@@ -1,8 +1,10 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
+import type { Adjunto } from '@/models/Adjunto';
 import type { HistorialPaciente } from '@/models/HistorialPaciente';
 import type { Paciente } from '@/models/Paciente';
+import { listarPorEvoluciones } from '@/services/adjuntosService';
 import { obtenerPorPaciente } from '@/services/historialService';
 import { obtenerPorId } from '@/services/pacientesService';
 
@@ -18,6 +20,8 @@ export function useHistorialViewModel(pacienteId: number) {
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [historial, setHistorial] = useState<HistorialPaciente | null>(null);
   const [expandida, setExpandida] = useState<number | null>(null);
+  const [fotos, setFotos] = useState<Record<number, Adjunto[]>>({});
+  const [fotoAbierta, setFotoAbierta] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
     try {
@@ -37,6 +41,8 @@ export function useHistorialViewModel(pacienteId: number) {
 
       setPaciente(respuestaPaciente.datos);
       setHistorial(respuestaHistorial.datos);
+      // F05: fotografías guardadas en el teléfono para estas evoluciones
+      setFotos(listarPorEvoluciones(respuestaHistorial.datos.evoluciones.map((e) => e.id)));
       setEstado('listo');
     } catch {
       setEstado('error');
@@ -68,6 +74,10 @@ export function useHistorialViewModel(pacienteId: number) {
     tieneAlergias: alergias.length > 0,
     expandida,
     alternarEvolucion,
+    fotosDe: (idEvolucion: number) => fotos[idEvolucion] ?? [],
+    fotoAbierta,
+    verFoto: setFotoAbierta,
+    cerrarFoto: () => setFotoAbierta(null),
     reintentar,
   };
 }
