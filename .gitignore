@@ -1,23 +1,48 @@
-# Dependencias
+# Dependencias (se reinstalan con npm install)
 node_modules/
 
 # Secretos: NUNCA al repositorio
 .env
-.env.local
+.env*.local
 
-# Expo
+# Expo (se regenera)
 .expo/
 dist/
 web-build/
+expo-env.d.ts
 
-# Builds nativos
+# Carpetas nativas generadas por Expo
+/ios
+/android
+.kotlin/
+
+# Builds e instalables
 *.apk
 *.aab
 *.ipa
-android/app/build/
-ios/build/
+*.orig.*
 
-# Sistema operativo / editor
-.DS_Store
+# Llaves y certificados de firma
+*.jks
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Logs
 *.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# TypeScript
+*.tsbuildinfo
+
+# Sistema operativo / editor / herramientas locales
+.DS_Store
 .vscode/
+.claude/
