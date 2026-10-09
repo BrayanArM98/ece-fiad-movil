@@ -1,3 +1,4 @@
+import { comprobarRed } from '@/config/simulacion';
 import type { HistorialPaciente } from '@/models/HistorialPaciente';
 import type { Respuesta } from '@/models/Respuesta';
 import { EVOLUCIONES_EJEMPLO, HISTORIAS_EJEMPLO } from '@/services/mocks/historiasMock';
@@ -11,6 +12,7 @@ const esperar = (ms: number) => new Promise((resolver) => setTimeout(resolver, m
 
 export async function obtenerPorPaciente(idPaciente: number): Promise<Respuesta<HistorialPaciente>> {
   await esperar(500);
+  comprobarRed();
 
   const historia = HISTORIAS_EJEMPLO.find((h) => h.idPaciente === idPaciente && h.activo) ?? null;
 

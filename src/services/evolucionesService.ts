@@ -1,3 +1,4 @@
+import { comprobarRed } from '@/config/simulacion';
 import type { CrearEvolucion } from '@/models/CrearEvolucion';
 import type { Evolucion } from '@/models/Evolucion';
 import type { Respuesta } from '@/models/Respuesta';
@@ -14,6 +15,7 @@ const esperar = (ms: number) => new Promise((resolver) => setTimeout(resolver, m
 
 export async function crear(datos: CrearEvolucion): Promise<Respuesta<Evolucion>> {
   await esperar(700);
+  comprobarRed();
 
   const errores = validarEvolucion(datos);
   if (!esValida(errores)) {

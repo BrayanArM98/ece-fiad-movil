@@ -1,3 +1,4 @@
+import { comprobarRed } from '@/config/simulacion';
 import type { Paciente } from '@/models/Paciente';
 import type { Respuesta } from '@/models/Respuesta';
 import { PACIENTES_EJEMPLO } from '@/services/mocks/pacientesMock';
@@ -10,6 +11,7 @@ const esperar = (ms: number) => new Promise((resolver) => setTimeout(resolver, m
 
 export async function obtenerActivos(): Promise<Respuesta<Paciente[]>> {
   await esperar(500);
+  comprobarRed();
   return {
     exitoso: true,
     mensaje: 'Pacientes activos obtenidos correctamente.',
@@ -19,6 +21,7 @@ export async function obtenerActivos(): Promise<Respuesta<Paciente[]>> {
 
 export async function obtenerPorId(id: number): Promise<Respuesta<Paciente>> {
   await esperar(300);
+  comprobarRed();
   const paciente = PACIENTES_EJEMPLO.find((p) => p.id === id);
   if (!paciente) {
     return { exitoso: false, mensaje: 'Paciente no encontrado', datos: null };
