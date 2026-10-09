@@ -5,13 +5,14 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, Vi
 import { Boton } from '@/components/Boton';
 import { CampoTexto } from '@/components/CampoTexto';
 import { SelectorFechaHora } from '@/components/SelectorFechaHora';
+import { SelectorFotos } from '@/components/SelectorFotos';
 import { colores } from '@/theme/colores';
 import { LIMITES_EVOLUCION } from '@/utils/validaciones';
 import { useNuevaEvolucionViewModel } from '@/viewmodels/useNuevaEvolucionViewModel';
 
 /**
  * Formulario de nueva evolución (specs/features/F04-registrar-evolucion.md).
- * Las fotografías (F05) se agregan sobre este mismo formulario.
+ * Incluye las fotografías de la evolución (specs/features/F05-fotografia-evolucion.md).
  */
 export default function NuevaEvolucionScreen() {
   const { historiaId, pacienteId } = useLocalSearchParams<{ historiaId: string; pacienteId: string }>();
@@ -81,6 +82,15 @@ export default function NuevaEvolucionScreen() {
           onCambiar={vm.setNotas}
           maximo={LIMITES_EVOLUCION.notas}
           placeholder="Observaciones adicionales (opcional)"
+        />
+
+        <SelectorFotos
+          fotos={vm.fotos}
+          maximo={LIMITES_EVOLUCION.fotos}
+          puedeAgregar={vm.puedeAgregarFoto}
+          aviso={vm.avisoFotos}
+          onAgregar={vm.agregarFoto}
+          onQuitar={vm.quitarFoto}
         />
 
         {vm.errorEnvio ? <Text style={styles.errorEnvio}>{vm.errorEnvio}</Text> : null}
