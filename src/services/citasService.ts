@@ -14,3 +14,12 @@ export async function obtenerTodas(): Promise<Respuesta<Cita[]>> {
   await esperar(600);
   return { exitoso: true, mensaje: 'Operación exitosa', datos: obtenerCitasDeEjemplo() };
 }
+
+export async function obtenerPorId(id: number): Promise<Respuesta<Cita>> {
+  await esperar(300);
+  const cita = obtenerCitasDeEjemplo().find((c) => c.id === id);
+  if (!cita) {
+    return { exitoso: false, mensaje: 'Cita no encontrada.', datos: null };
+  }
+  return { exitoso: true, mensaje: 'Operación exitosa', datos: cita };
+}
