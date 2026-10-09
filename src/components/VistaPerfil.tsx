@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Boton } from '@/components/Boton';
+import { PanelSimulacion } from '@/components/PanelSimulacion';
 import { colores } from '@/theme/colores';
 import { usePerfilViewModel } from '@/viewmodels/usePerfilViewModel';
 
@@ -11,18 +12,20 @@ export function VistaPerfil() {
   const { nombre, rolTexto, cerrarSesion } = usePerfilViewModel();
 
   return (
-    <View style={styles.contenedor}>
+    <ScrollView style={styles.pantalla} contentContainerStyle={styles.contenido}>
       <View style={styles.tarjeta}>
         <Text style={styles.nombre}>{nombre}</Text>
         <Text style={styles.rol}>{rolTexto}</Text>
       </View>
       <Boton titulo="Cerrar sesión" variante="secundario" onPress={cerrarSesion} />
-    </View>
+      <PanelSimulacion />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  contenedor: { flex: 1, backgroundColor: colores.fondo, padding: 24, gap: 24 },
+  pantalla: { flex: 1, backgroundColor: colores.fondo },
+  contenido: { padding: 24, gap: 24 },
   tarjeta: {
     backgroundColor: colores.superficie,
     borderRadius: 12,
