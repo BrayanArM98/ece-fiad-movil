@@ -1,17 +1,15 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Redirect } from 'expo-router';
 
+import { useSesion } from '@/context/SesionContext';
+
+/**
+ * Punto de entrada: envía a cada usuario a la pestaña inicial de su rol
+ * (specs/01-navigation.md, "Rutas y parámetros").
+ */
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
-  );
-}
+  const { sesion } = useSesion();
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+  if (!sesion) return <Redirect href="/login" />;
+  if (sesion.rol === 'medico') return <Redirect href="/medico/agenda" />;
+  return <Redirect href="/paciente/mis-citas" />;
+}
