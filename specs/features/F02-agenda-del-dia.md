@@ -57,25 +57,25 @@ El médico ve en una sola pantalla todas sus citas de hoy, ordenadas por hora, y
 
 ## Criterios de aceptación
 
-- [ ] Al iniciar sesión como médico, la primera pantalla es Agenda.
-- [ ] Con 3 citas de ejemplo de hoy para el médico y 2 de otro médico, la lista muestra exactamente 3.
-- [ ] Una cita de ayer o de mañana no aparece en la lista.
-- [ ] Las citas aparecen en orden de hora: la de 9:00 antes que la de 11:30.
-- [ ] Cada tarjeta muestra hora, nombre del paciente, motivo y estado.
-- [ ] El resumen muestra el total de citas y cuántas están en estado Pendiente o Confirmada.
-- [ ] Una cita Cancelada aparece al final de la lista y con su estado visible.
+- [x] Al iniciar sesión como médico, la primera pantalla es Agenda.
+- [x] Con 3 citas de ejemplo de hoy para el médico y 2 de otro médico, la lista muestra exactamente 3.
+- [x] Una cita de ayer o de mañana no aparece en la lista.
+- [x] Las citas aparecen en orden de hora: la de 9:00 antes que la de 11:30.
+- [x] Cada tarjeta muestra hora, nombre del paciente, motivo y estado.
+- [x] El resumen muestra el total de citas y cuántas están en estado Pendiente o Confirmada.
+- [x] Una cita Cancelada aparece al final de la lista y con su estado visible.
 - [ ] Sin citas para hoy se muestra "No tienes citas programadas para hoy".
 - [ ] Si el servicio falla, se muestra el error y "Reintentar" vuelve a consultar.
-- [ ] Deslizar hacia abajo recarga la lista.
-- [ ] Tocar una cita abre CitaDetalle con el `citaId` correcto.
+- [x] Deslizar hacia abajo recarga la lista.
+- [x] Tocar una cita abre CitaDetalle con el `citaId` correcto.
 
 ## Tasks
 
-- [ ] Crear el tipo `Cita` en `src/models`.
-- [ ] Crear datos de ejemplo de citas en `src/services/mocks`.
-- [ ] Crear `citasService.obtenerTodas()` que devuelva los datos de ejemplo con la forma `Respuesta<Cita[]>`.
-- [ ] Crear el ViewModel `useAgendaViewModel` con el filtro por médico y fecha, el orden y el resumen.
-- [ ] Crear el componente `TarjetaCita`.
-- [ ] Crear la pantalla `AgendaScreen` con sus cuatro estados.
-- [ ] Conectar el toque de una tarjeta con la navegación a CitaDetalle.
-- [ ] Probar los criterios de aceptación.
+- [x] Crear el tipo `Cita` en `src/models`.
+- [x] Crear datos de ejemplo de citas en `src/services/mocks`.
+- [x] Crear `citasService.obtenerTodas()` que devuelva los datos de ejemplo con la forma `Respuesta<Cita[]>`.
+- [x] Crear el ViewModel `useAgendaViewModel` con el filtro por médico y fecha, el orden y el resumen.
+- [x] Crear el componente `TarjetaCita`.
+- [x] Crear la pantalla `AgendaScreen` con sus cuatro estados.
+- [x] Conectar el toque de una tarjeta con la navegación a CitaDetalle.
+- [ ] Probar los criterios de aceptación (faltan lista vacía y error, que los datos de ejemplo no producen).
