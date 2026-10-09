@@ -21,3 +21,8 @@ export function formatearFechaLarga(fecha: Date): string {
   const dia = DIAS[fecha.getDay()];
   return `${dia.charAt(0).toUpperCase()}${dia.slice(1)} ${fecha.getDate()} de ${MESES[fecha.getMonth()]}`;
 }
+
+/** "9 de octubre de 2026" */
+export function formatearFechaCompleta(fecha: Date): string {
+  return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+}
