@@ -29,7 +29,8 @@ export async function crear(datos: CrearEvolucion): Promise<Respuesta<Evolucion>
 
   const doctor = DOCTORES_EJEMPLO[datos.idDoctor];
   const nueva: Evolucion = {
-    id: Math.max(0, ...EVOLUCIONES_EJEMPLO.map((e) => e.id)) + 1,
+    // Id único entre sesiones para que las fotos guardadas (F05) no se asocien a otra evolución
+    id: Date.now(),
     idHistoriaClinica: datos.idHistoriaClinica,
     idDoctor: datos.idDoctor,
     nombrePaciente: historia.nombrePaciente,

@@ -8,6 +8,7 @@ export const LIMITES_EVOLUCION = {
   diagnostico: 500,
   tratamiento: 500,
   notas: 1000,
+  fotos: 3, // F05: máximo de fotografías por evolución
 };
 
 export interface ErroresEvolucion {
