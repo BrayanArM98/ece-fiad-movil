@@ -60,23 +60,23 @@ El médico ve en una sola pantalla los antecedentes y todas las consultas previa
 
 ## Criterios de aceptación
 
-- [ ] Desde CitaDetalle, "Ver historial" abre el historial del paciente de esa cita.
-- [ ] La pestaña Pacientes muestra solo pacientes activos, ordenados por apellido.
-- [ ] El encabezado muestra nombre, edad correcta y grupo sanguíneo.
-- [ ] Las alergias se muestran con un estilo distinto al resto de los antecedentes.
-- [ ] Sin alergias se lee "Sin alergias registradas".
-- [ ] Las evoluciones aparecen de la más reciente a la más antigua.
-- [ ] Un paciente sin historia muestra el mensaje y no muestra "Nueva evolución".
+- [x] Desde CitaDetalle, "Ver historial" abre el historial del paciente de esa cita.
+- [x] La pestaña Pacientes muestra solo pacientes activos, ordenados por apellido.
+- [x] El encabezado muestra nombre, edad correcta y grupo sanguíneo.
+- [x] Las alergias se muestran con un estilo distinto al resto de los antecedentes.
+- [x] Sin alergias se lee "Sin alergias registradas".
+- [x] Las evoluciones aparecen de la más reciente a la más antigua.
+- [x] Un paciente sin historia muestra el mensaje y no muestra "Nueva evolución".
 - [ ] Si el servicio falla, "Reintentar" vuelve a consultar.
 
 ## Tasks
 
-- [ ] Crear los tipos `Paciente`, `HistoriaClinica`, `Evolucion` y `HistorialPaciente`.
-- [ ] Crear datos de ejemplo de pacientes, historias y evoluciones.
-- [ ] Crear `pacientesService.obtenerActivos()` e `historialService.obtenerPorPaciente(id)`.
-- [ ] Crear `CitaDetalleScreen` con el botón "Ver historial".
-- [ ] Crear el ViewModel y la pantalla de la lista de Pacientes.
-- [ ] Crear el ViewModel `useHistorialViewModel` con el cálculo de edad.
-- [ ] Crear los componentes `EncabezadoPaciente` y `TarjetaEvolucion`.
-- [ ] Crear `HistorialPacienteScreen` con sus cinco estados.
-- [ ] Probar los criterios de aceptación.
+- [x] Crear los tipos `Paciente`, `HistoriaClinica`, `Evolucion` y `HistorialPaciente`.
+- [x] Crear datos de ejemplo de pacientes, historias y evoluciones.
+- [x] Crear `pacientesService.obtenerActivos()` e `historialService.obtenerPorPaciente(id)`.
+- [x] Crear `CitaDetalleScreen` con el botón "Ver historial".
+- [x] Crear el ViewModel y la pantalla de la lista de Pacientes.
+- [x] Crear el ViewModel `useHistorialViewModel` con el cálculo de edad.
+- [x] Crear los componentes `EncabezadoPaciente` y `TarjetaEvolucion`.
+- [x] Crear `HistorialPacienteScreen` con sus cinco estados.
+- [ ] Probar los criterios de aceptación (faltan los casos de error con el modo de prueba).

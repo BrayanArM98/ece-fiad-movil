@@ -57,22 +57,22 @@ La evolución queda registrada en la historia clínica del paciente y es visible
 
 ## Criterios de aceptación
 
-- [ ] El formulario abre con la fecha y hora actuales.
-- [ ] Con diagnóstico o tratamiento vacíos, "Guardar" está deshabilitado.
-- [ ] No se pueden escribir más de 500 caracteres en diagnóstico ni en tratamiento.
-- [ ] Una fecha futura muestra "La fecha no puede ser futura" y no se envía.
-- [ ] Al guardar correctamente, se regresa al historial y la evolución aparece primero.
-- [ ] La evolución guardada tiene el `idDoctor` del médico de la sesión.
+- [x] El formulario abre con la fecha y hora actuales.
+- [x] Con diagnóstico o tratamiento vacíos, "Guardar" está deshabilitado.
+- [x] No se pueden escribir más de 500 caracteres en diagnóstico ni en tratamiento.
+- [x] Una fecha futura muestra "La fecha no puede ser futura" y no se envía.
+- [x] Al guardar correctamente, se regresa al historial y la evolución aparece primero.
+- [x] La evolución guardada tiene el `idDoctor` del médico de la sesión.
 - [ ] Si el guardado falla, los datos capturados siguen en el formulario.
-- [ ] Salir con datos sin guardar muestra la confirmación de descarte.
+- [x] Salir con datos sin guardar muestra la confirmación de descarte.
 - [ ] Tocar "Guardar" dos veces seguidas registra una sola evolución.
 
 ## Tasks
 
-- [ ] Crear el tipo `CrearEvolucion` en `src/models`.
-- [ ] Crear `evolucionesService.crear(datos)`.
-- [ ] Crear `validarEvolucion` con las reglas de la tabla.
-- [ ] Crear el ViewModel `useNuevaEvolucionViewModel` (campos, errores, envío, cambios sin guardar).
-- [ ] Crear `NuevaEvolucionScreen`.
-- [ ] Actualizar el historial al regresar.
-- [ ] Probar los criterios de aceptación.
+- [x] Crear el tipo `CrearEvolucion` en `src/models`.
+- [x] Crear `evolucionesService.crear(datos)`.
+- [x] Crear `validarEvolucion` con las reglas de la tabla.
+- [x] Crear el ViewModel `useNuevaEvolucionViewModel` (campos, errores, envío, cambios sin guardar).
+- [x] Crear `NuevaEvolucionScreen`.
+- [x] Actualizar el historial al regresar.
+- [ ] Probar los criterios de aceptación (faltan los casos de error con el modo de prueba).

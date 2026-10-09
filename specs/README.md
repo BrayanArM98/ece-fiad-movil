@@ -18,7 +18,7 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 | F01 | Iniciar sesión con biometría | [F01](features/F01-inicio-sesion-biometria.md) | Especificada |
 | F02 | Ver la agenda del día | [F02](features/F02-agenda-del-dia.md) | Implementada |
 | F03 | Consultar el historial de un paciente | [F03](features/F03-historial-paciente.md) | Implementada |
-| F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Especificada |
+| F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Implementada |
 | F05 | Adjuntar una fotografía a la evolución | [F05](features/F05-fotografia-evolucion.md) | Especificada |
 | F06 | Ver mis citas y recibir recordatorios | [F06](features/F06-mis-citas-recordatorios.md) | Especificada |
 | F07 | Ubicar la clínica en el mapa | [F07](features/F07-ubicar-clinica.md) | Especificada |
@@ -59,6 +59,10 @@ Todas las specs de `features/` siguen la misma estructura:
         ↓
 7. Si algo cambió durante la implementación, actualizar la spec
 ```
+
+## Validación de casos de error
+
+Mientras la app usa datos de ejemplo, los casos de error no ocurren por sí solos. Para validarlos, la pestaña Perfil incluye un **modo de prueba** (solo en desarrollo) que simula una falla de red o una agenda sin citas. Con él se comprueban los criterios de aceptación de los estados de error y de lista vacía. Al conectar la API, estos casos se producen de verdad.
 
 ## Trazabilidad
 
