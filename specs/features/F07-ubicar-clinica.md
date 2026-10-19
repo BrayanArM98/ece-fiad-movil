@@ -61,13 +61,16 @@ El paciente ve dónde está la clínica respecto a él y puede iniciar la ruta o
 ## Decisiones
 
 - Las coordenadas de la clínica se definen en un archivo de configuración de la app, porque la API no guarda datos de la clínica.
-- Ubicación con `expo-location`; mapa con `react-native-maps`; "Cómo llegar" y "Llamar" con `Linking`.
+- Ubicación con `expo-location`, solo mientras la app está abierta (nunca en segundo plano); mapa con `react-native-maps`; "Cómo llegar" y "Llamar" con `Linking`.
+- "Cómo llegar" abre Google Maps en Android y Apple Maps en iOS. La distancia mostrada es en línea recta; la distancia por carretera la da la app de mapas.
+- En Expo Go el mapa funciona sin configuración. Una compilación propia para Android necesitará una clave de Google Maps (se agrega al configurar EAS).
 
 ## Tasks
 
-- [ ] Crear `src/config/clinica.ts` con los datos de la clínica.
-- [ ] Crear `ubicacionService` (permiso, posición actual con tiempo límite).
-- [ ] Crear la función `calcularDistancia` y su formato.
-- [ ] Crear el ViewModel `useClinicaViewModel`.
-- [ ] Crear `ClinicaScreen` con sus estados.
+- [x] Crear el tipo `Clinica` y `src/config/clinica.ts` con los datos de la clínica.
+- [x] Crear `ubicacionService` (permiso, posición actual con tiempo límite).
+- [x] Crear la función `calcularDistancia` y su formato.
+- [x] Crear `enlacesService` para abrir la app de mapas y el marcador.
+- [x] Crear el ViewModel `useClinicaViewModel`.
+- [x] Crear `ClinicaScreen` con sus estados.
 - [ ] Probar los criterios de aceptación en un teléfono real.

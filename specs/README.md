@@ -16,12 +16,12 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 | ID | Feature | Spec | Estado |
 |----|---------|------|--------|
 | F01 | Iniciar sesión con biometría | [F01](features/F01-inicio-sesion-biometria.md) | Especificada |
-| F02 | Ver la agenda del día | [F02](features/F02-agenda-del-dia.md) | Implementada |
-| F03 | Consultar el historial de un paciente | [F03](features/F03-historial-paciente.md) | Implementada |
-| F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Implementada |
+| F02 | Ver la agenda del día | [F02](features/F02-agenda-del-dia.md) | Validada |
+| F03 | Consultar el historial de un paciente | [F03](features/F03-historial-paciente.md) | Validada |
+| F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Validada |
 | F05 | Adjuntar una fotografía a la evolución | [F05](features/F05-fotografia-evolucion.md) | Implementada |
 | F06 | Ver mis citas y recibir recordatorios | [F06](features/F06-mis-citas-recordatorios.md) | Implementada |
-| F07 | Ubicar la clínica en el mapa | [F07](features/F07-ubicar-clinica.md) | Especificada |
+| F07 | Ubicar la clínica en el mapa | [F07](features/F07-ubicar-clinica.md) | Implementada |
 
 Estados posibles: Especificada → En desarrollo → Implementada → Validada. Una feature solo pasa a **Validada** cuando todos sus criterios de aceptación están marcados.
 

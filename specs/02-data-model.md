@@ -132,6 +132,15 @@ RecordatorioProgramado {
 }
 ```
 
+```ts
+Clinica {                      // configurada en src/config/clinica.ts
+  nombre: string
+  direccion: string
+  telefono: string
+  coordenadas: { latitude: number, longitude: number }
+}
+```
+
 ## Dónde vive cada dato
 
 | Dato | Dónde | Motivo |
@@ -140,9 +149,11 @@ RecordatorioProgramado {
 | Sesion | Almacenamiento seguro del teléfono | Contiene datos de acceso |
 | Adjunto | Archivos locales del teléfono | La API aún no recibe imágenes |
 | RecordatorioProgramado | Archivo JSON en el teléfono | Evitar programar dos avisos para la misma cita |
+| Clinica | Configuración de la app | La API no guarda datos de la clínica |
 
 ## Pendientes con la API
 
 - No existe autenticación ni roles: `Sesion` se simula hasta que la API tenga inicio de sesión.
 - No existe un endpoint para subir imágenes: los `Adjunto` quedan solo en el teléfono.
 - No existe un filtro de citas por doctor y fecha: la agenda filtra en el teléfono la lista completa de citas.
+- No existen datos de la clínica (dirección, teléfono, coordenadas): se configuran en la app.
