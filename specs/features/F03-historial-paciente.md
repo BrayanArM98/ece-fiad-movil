@@ -67,7 +67,7 @@ El médico ve en una sola pantalla los antecedentes y todas las consultas previa
 - [x] Sin alergias se lee "Sin alergias registradas".
 - [x] Las evoluciones aparecen de la más reciente a la más antigua.
 - [x] Un paciente sin historia muestra el mensaje y no muestra "Nueva evolución".
-- [ ] Si el servicio falla, "Reintentar" vuelve a consultar.
+- [x] Si el servicio falla, "Reintentar" vuelve a consultar.
 
 ## Tasks
 
@@ -79,4 +79,4 @@ El médico ve en una sola pantalla los antecedentes y todas las consultas previa
 - [x] Crear el ViewModel `useHistorialViewModel` con el cálculo de edad.
 - [x] Crear los componentes `EncabezadoPaciente` y `TarjetaEvolucion`.
 - [x] Crear `HistorialPacienteScreen` con sus cinco estados.
-- [ ] Probar los criterios de aceptación (faltan los casos de error con el modo de prueba).
+- [x] Probar los criterios de aceptación.

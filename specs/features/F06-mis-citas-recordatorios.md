@@ -56,15 +56,20 @@ El paciente conoce sus próximas citas y recibe dos avisos antes de cada una.
 
 ## Criterios de aceptación
 
-- [ ] Al entrar como paciente, la primera pantalla es Mis citas.
-- [ ] Solo aparecen citas del paciente de la sesión, de hoy en adelante y no canceladas.
-- [ ] Las citas aparecen de la más próxima a la más lejana.
-- [ ] Para una cita dentro de 2 días se programan exactamente 2 recordatorios.
-- [ ] Para una cita dentro de 30 minutos no se programa ninguno de los dos.
-- [ ] Abrir Mis citas dos veces no duplica recordatorios.
-- [ ] Una cita cancelada pierde sus recordatorios.
+- [x] Al entrar como paciente, la primera pantalla es Mis citas.
+- [x] Solo aparecen citas del paciente de la sesión, de hoy en adelante y no canceladas.
+- [x] Las citas aparecen de la más próxima a la más lejana.
+- [x] Para una cita dentro de 2 días se programan exactamente 2 recordatorios.
+- [x] Para una cita dentro de 30 minutos no se programa ninguno de los dos.
+- [x] Abrir Mis citas dos veces no duplica recordatorios.
+- [x] Una cita cancelada pierde sus recordatorios.
 - [ ] Con el permiso negado, la lista se muestra junto con el aviso de notificaciones desactivadas.
-- [ ] Al tocar un recordatorio se abre Mis citas.
+- [x] Al tocar un recordatorio se abre Mis citas.
+
+## Validación
+
+- En un teléfono Android con Expo Go: pantalla inicial, filtro y orden de las citas, conteo de recordatorios programados, recordatorio de prueba que abre Mis citas al tocarlo, y eliminación de recordatorios al cerrar sesión.
+- Con una prueba automatizada de las reglas de recordatorios, sin esperar los avisos reales: cita dentro de 2 días (2 avisos), cita dentro de 30 minutos (ninguno), sincronizar dos veces sin duplicar, cita cancelada y cita que cambia de hora.
 
 ## Decisiones
 
@@ -72,11 +77,11 @@ El paciente conoce sus próximas citas y recibe dos avisos antes de cada una.
 
 ## Tasks
 
-- [ ] Crear el tipo `RecordatorioProgramado`.
-- [ ] Crear `notificacionesService` (permiso, programar, cancelar, cancelar todos).
-- [ ] Crear `recordatoriosService` con las reglas de la sección anterior.
-- [ ] Crear el ViewModel `useMisCitasViewModel`.
-- [ ] Crear la pantalla `MisCitasScreen` con sus estados.
-- [ ] Abrir Mis citas al tocar un recordatorio.
-- [ ] Cancelar recordatorios al cerrar sesión.
-- [ ] Probar los criterios de aceptación en un teléfono real.
+- [x] Crear el tipo `RecordatorioProgramado`.
+- [x] Crear `notificacionesService` (permiso, programar, cancelar, cancelar todos).
+- [x] Crear `recordatoriosService` con las reglas de la sección anterior.
+- [x] Crear el ViewModel `useMisCitasViewModel`.
+- [x] Crear la pantalla `MisCitasScreen` con sus estados.
+- [x] Abrir Mis citas al tocar un recordatorio.
+- [x] Cancelar recordatorios al cerrar sesión.
+- [ ] Probar los criterios de aceptación en un teléfono real (falta el permiso negado).

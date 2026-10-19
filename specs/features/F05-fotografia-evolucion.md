@@ -45,14 +45,18 @@ La evolución queda acompañada de hasta tres fotografías que el médico puede 
 
 ## Criterios de aceptación
 
-- [ ] "Agregar foto" ofrece cámara y galería.
-- [ ] La foto tomada aparece como miniatura en el formulario.
-- [ ] La miniatura se puede quitar antes de guardar.
-- [ ] Con 3 fotos, "Agregar foto" se deshabilita.
+- [x] "Agregar foto" ofrece cámara y galería.
+- [x] La foto tomada aparece como miniatura en el formulario.
+- [x] La miniatura se puede quitar antes de guardar.
+- [x] Con 3 fotos, "Agregar foto" se deshabilita.
 - [ ] Con el permiso de cámara negado, se muestra el mensaje y la galería sigue funcionando.
-- [ ] Después de guardar, la evolución muestra sus fotos en el historial.
-- [ ] Tocar una foto del historial la abre en pantalla completa.
+- [x] Después de guardar, la evolución muestra sus fotos en el historial.
+- [x] Tocar una foto del historial la abre en pantalla completa.
 - [ ] Si la evolución no se guarda, ninguna foto queda asociada.
+
+## Validación
+
+Probada en un teléfono Android con Expo Go. Quedan pendientes el permiso de cámara negado y el guardado fallido; el segundo se prueba activando "Simular falla de red" en el modo de prueba antes de guardar.
 
 ## Decisiones
 
@@ -61,10 +65,10 @@ La evolución queda acompañada de hasta tres fotografías que el médico puede 
 
 ## Tasks
 
-- [ ] Crear el tipo `Adjunto`.
-- [ ] Crear `adjuntosService` (guardar, listar por evolución, borrar).
-- [ ] Crear `camaraService` con solicitud de permisos.
-- [ ] Agregar fotos al ViewModel `useNuevaEvolucionViewModel`.
-- [ ] Crear el componente `SelectorFotos` con miniaturas.
-- [ ] Mostrar las fotos en `TarjetaEvolucion` y el visor en pantalla completa.
-- [ ] Probar los criterios de aceptación en un teléfono real.
+- [x] Crear el tipo `Adjunto`.
+- [x] Crear `adjuntosService` (guardar y listar por evolución).
+- [x] Crear `camaraService` con solicitud de permisos.
+- [x] Agregar fotos al ViewModel `useNuevaEvolucionViewModel`.
+- [x] Crear el componente `SelectorFotos` con miniaturas.
+- [x] Mostrar las fotos en `TarjetaEvolucion` y el visor en pantalla completa.
+- [ ] Probar los criterios de aceptación en un teléfono real (faltan permiso negado y guardado fallido).

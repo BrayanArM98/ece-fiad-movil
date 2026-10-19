@@ -63,9 +63,9 @@ La evolución queda registrada en la historia clínica del paciente y es visible
 - [x] Una fecha futura muestra "La fecha no puede ser futura" y no se envía.
 - [x] Al guardar correctamente, se regresa al historial y la evolución aparece primero.
 - [x] La evolución guardada tiene el `idDoctor` del médico de la sesión.
-- [ ] Si el guardado falla, los datos capturados siguen en el formulario.
+- [x] Si el guardado falla, los datos capturados siguen en el formulario.
 - [x] Salir con datos sin guardar muestra la confirmación de descarte.
-- [ ] Tocar "Guardar" dos veces seguidas registra una sola evolución.
+- [x] Tocar "Guardar" dos veces seguidas registra una sola evolución.
 
 ## Tasks
 
@@ -75,4 +75,4 @@ La evolución queda registrada en la historia clínica del paciente y es visible
 - [x] Crear el ViewModel `useNuevaEvolucionViewModel` (campos, errores, envío, cambios sin guardar).
 - [x] Crear `NuevaEvolucionScreen`.
 - [x] Actualizar el historial al regresar.
-- [ ] Probar los criterios de aceptación (faltan los casos de error con el modo de prueba).
+- [x] Probar los criterios de aceptación.

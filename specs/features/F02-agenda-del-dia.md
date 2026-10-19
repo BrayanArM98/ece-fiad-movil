@@ -64,8 +64,8 @@ El médico ve en una sola pantalla todas sus citas de hoy, ordenadas por hora, y
 - [x] Cada tarjeta muestra hora, nombre del paciente, motivo y estado.
 - [x] El resumen muestra el total de citas y cuántas están en estado Pendiente o Confirmada.
 - [x] Una cita Cancelada aparece al final de la lista y con su estado visible.
-- [ ] Sin citas para hoy se muestra "No tienes citas programadas para hoy".
-- [ ] Si el servicio falla, se muestra el error y "Reintentar" vuelve a consultar.
+- [x] Sin citas para hoy se muestra "No tienes citas programadas para hoy".
+- [x] Si el servicio falla, se muestra el error y "Reintentar" vuelve a consultar.
 - [x] Deslizar hacia abajo recarga la lista.
 - [x] Tocar una cita abre CitaDetalle con el `citaId` correcto.
 
@@ -78,4 +78,4 @@ El médico ve en una sola pantalla todas sus citas de hoy, ordenadas por hora, y
 - [x] Crear el componente `TarjetaCita`.
 - [x] Crear la pantalla `AgendaScreen` con sus cuatro estados.
 - [x] Conectar el toque de una tarjeta con la navegación a CitaDetalle.
-- [ ] Probar los criterios de aceptación (faltan lista vacía y error, que los datos de ejemplo no producen).
+- [x] Probar los criterios de aceptación.
