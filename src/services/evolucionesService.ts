@@ -27,15 +27,15 @@ export async function crear(datos: CrearEvolucion): Promise<Respuesta<Evolucion>
     return { exitoso: false, mensaje: 'La historia clínica no existe.', datos: null };
   }
 
-  const doctor = DOCTORES_EJEMPLO[datos.idDoctor];
+  const doctor = DOCTORES_EJEMPLO.find((d) => d.id === datos.idDoctor);
   const nueva: Evolucion = {
     // Id único entre sesiones para que las fotos guardadas (F05) no se asocien a otra evolución
     id: Date.now(),
     idHistoriaClinica: datos.idHistoriaClinica,
     idDoctor: datos.idDoctor,
     nombrePaciente: historia.nombrePaciente,
-    nombreDoctor: doctor?.nombre ?? '',
-    nombreEspecialidad: doctor?.especialidad ?? '',
+    nombreDoctor: doctor?.nombreCompleto ?? '',
+    nombreEspecialidad: doctor?.nombreEspecialidad ?? '',
     fecha: datos.fecha,
     diagnostico: datos.diagnostico.trim(),
     tratamiento: datos.tratamiento.trim(),
