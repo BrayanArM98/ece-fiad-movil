@@ -61,5 +61,8 @@ export function obtenerCitasDeEjemplo(): Cita[] {
     // Ayer y mañana, médico 1: no deben aparecer en la agenda de hoy
     crearCita(7, 1, 2, 'María González', fechaRelativa(-1, 10, 0), 'Consulta general', 'Completada'),
     crearCita(8, 1, 1, 'Juan Pérez', fechaRelativa(1, 9, 0), 'Toma de presión', 'Pendiente'),
+    // Próximas citas del paciente de prueba (Juan Pérez) para Mis citas (F06)
+    crearCita(9, 2, 1, 'Juan Pérez', fechaRelativa(3, 10, 0), 'Revisión cardiológica', 'Confirmada'),
+    crearCita(10, 1, 1, 'Juan Pérez', fechaRelativa(2, 12, 0), 'Resultados de laboratorio', 'Cancelada'),
   ];
 }
