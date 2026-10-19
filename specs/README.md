@@ -19,8 +19,8 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 | F02 | Ver la agenda del día | [F02](features/F02-agenda-del-dia.md) | Implementada |
 | F03 | Consultar el historial de un paciente | [F03](features/F03-historial-paciente.md) | Implementada |
 | F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Implementada |
-| F05 | Adjuntar una fotografía a la evolución | [F05](features/F05-fotografia-evolucion.md) | Especificada |
-| F06 | Ver mis citas y recibir recordatorios | [F06](features/F06-mis-citas-recordatorios.md) | Especificada |
+| F05 | Adjuntar una fotografía a la evolución | [F05](features/F05-fotografia-evolucion.md) | Implementada |
+| F06 | Ver mis citas y recibir recordatorios | [F06](features/F06-mis-citas-recordatorios.md) | Implementada |
 | F07 | Ubicar la clínica en el mapa | [F07](features/F07-ubicar-clinica.md) | Especificada |
 
 Estados posibles: Especificada → En desarrollo → Implementada → Validada. Una feature solo pasa a **Validada** cuando todos sus criterios de aceptación están marcados.
@@ -62,7 +62,7 @@ Todas las specs de `features/` siguen la misma estructura:
 
 ## Validación de casos de error
 
-Mientras la app usa datos de ejemplo, los casos de error no ocurren por sí solos. Para validarlos, la pestaña Perfil incluye un **modo de prueba** (solo en desarrollo) que simula una falla de red o una agenda sin citas. Con él se comprueban los criterios de aceptación de los estados de error y de lista vacía. Al conectar la API, estos casos se producen de verdad.
+Mientras la app usa datos de ejemplo, los casos de error no ocurren por sí solos. Para validarlos, la pestaña Perfil incluye un **modo de prueba** (solo en desarrollo) que simula una falla de red o una lista de citas vacía. Para el paciente también muestra cuántos recordatorios hay programados y envía un recordatorio de prueba en 10 segundos, para validar F06 sin esperar un día. Con él se comprueban los criterios de aceptación de los estados de error y de lista vacía. Al conectar la API, estos casos se producen de verdad.
 
 ## Trazabilidad
 

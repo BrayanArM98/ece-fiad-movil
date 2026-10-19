@@ -126,6 +126,7 @@ Adjunto {
 ```ts
 RecordatorioProgramado {
   idCita: number
+  tipo: 'diaAntes' | 'horaAntes'
   idNotificacion: string       // identificador que devuelve el sistema de notificaciones
   fechaAviso: string
 }
@@ -138,7 +139,7 @@ RecordatorioProgramado {
 | Entidades clínicas | API REST (datos de ejemplo mientras tanto) | Fuente única de la clínica |
 | Sesion | Almacenamiento seguro del teléfono | Contiene datos de acceso |
 | Adjunto | Archivos locales del teléfono | La API aún no recibe imágenes |
-| RecordatorioProgramado | Almacenamiento local | Evitar programar dos avisos para la misma cita |
+| RecordatorioProgramado | Archivo JSON en el teléfono | Evitar programar dos avisos para la misma cita |
 
 ## Pendientes con la API
 
