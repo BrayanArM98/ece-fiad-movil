@@ -5,7 +5,7 @@ import { guardar as guardarAdjuntos } from '@/services/adjuntosService';
 import { obtenerFoto, type OrigenFoto } from '@/services/camaraService';
 import { crear } from '@/services/evolucionesService';
 import { obtenerPorId } from '@/services/pacientesService';
-import { formatearFechaCompleta, formatearHora } from '@/utils/fechas';
+import { aFechaLocalIso, formatearFechaCompleta, formatearHora } from '@/utils/fechas';
 import { nombreCompleto } from '@/utils/pacientes';
 import { esValida, LIMITES_EVOLUCION, validarEvolucion } from '@/utils/validaciones';
 
@@ -43,7 +43,7 @@ export function useNuevaEvolucionViewModel(historiaId: number, pacienteId: numbe
   const datos = {
     idHistoriaClinica: historiaId,
     idDoctor: sesion?.idDoctor ?? 0, // F04: el médico no se captura, viene de la sesión
-    fecha: fecha.toISOString(),
+    fecha: aFechaLocalIso(fecha),
     diagnostico,
     tratamiento,
     notas,

@@ -26,3 +26,16 @@ export function formatearFechaLarga(fecha: Date): string {
 export function formatearFechaCompleta(fecha: Date): string {
   return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
 }
+
+const dosDigitos = (n: number) => String(n).padStart(2, '0');
+
+/**
+ * Fecha en hora local sin zona horaria, por ejemplo "2026-10-29T10:30:00".
+ * Es el formato que espera la API, que guarda las fechas sin zona (specs/03-api.md).
+ */
+export function aFechaLocalIso(fecha: Date): string {
+  return (
+    `${fecha.getFullYear()}-${dosDigitos(fecha.getMonth() + 1)}-${dosDigitos(fecha.getDate())}` +
+    `T${dosDigitos(fecha.getHours())}:${dosDigitos(fecha.getMinutes())}:${dosDigitos(fecha.getSeconds())}`
+  );
+}
