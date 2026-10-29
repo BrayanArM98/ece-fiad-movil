@@ -46,7 +46,14 @@
         {
           "locationWhenInUsePermission": "ECE-FIAD usa tu ubicación para mostrar qué tan lejos estás de la clínica."
         }
-      ]
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "ECE-FIAD usa Face ID para que entres a tu expediente sin escribir tu contraseña."
+        }
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
