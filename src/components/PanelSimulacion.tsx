@@ -1,6 +1,7 @@
 import { StyleSheet, Switch, Text, View } from 'react-native';
 
 import { Boton } from '@/components/Boton';
+import { API_URL, usarApi } from '@/config/api';
 import { colores } from '@/theme/colores';
 import { useSimulacionViewModel } from '@/viewmodels/useSimulacionViewModel';
 
@@ -15,6 +16,7 @@ export function PanelSimulacion() {
     <View style={styles.panel}>
       <Text style={styles.titulo}>Modo de prueba</Text>
       <Text style={styles.ayuda}>Simula casos de error para validar los criterios de las specs.</Text>
+      <Text style={styles.etiqueta}>Origen de los datos: {usarApi ? `API (${API_URL})` : 'datos de ejemplo'}</Text>
 
       <Fila etiqueta="Simular falla de red" valor={vm.fallaDeRed} onCambiar={vm.cambiarFallaDeRed} />
       <Fila etiqueta="Simular sin citas" valor={vm.sinCitas} onCambiar={vm.cambiarSinCitas} />
