@@ -7,15 +7,11 @@ import { useLoginViewModel } from '@/viewmodels/useLoginViewModel';
 
 /**
  * Pantalla Login (specs/features/F01-inicio-sesion-biometria.md).
- * Solo muestra el estado del ViewModel; la biometría se agrega en la implementación de F01.
+ * Solo muestra el estado del ViewModel: acceso con huella o rostro si hay una sesión guardada,
+ * y siempre el formulario de correo y contraseña.
  */
 export default function LoginScreen() {
-  const vm = useLoginViewModel();
-
-  async function alEntrar() {
-    const exito = await vm.entrar();
-    if (exito) router.replace('/');
-  }
+  const vm = useLoginViewModel(() => router.replace('/'));
 
   return (
     <KeyboardAvoidingView
@@ -26,6 +22,20 @@ export default function LoginScreen() {
         <Text style={styles.titulo}>ECE-FIAD</Text>
         <Text style={styles.subtitulo}>Expediente Clínico Electrónico</Text>
       </View>
+
+      {vm.sesionGuardada ? (
+        <View style={styles.biometria}>
+          <Text style={styles.saludo}>Hola de nuevo, {vm.sesionGuardada.nombre}</Text>
+          <Boton
+            titulo="Entrar con huella o rostro"
+            onPress={vm.entrarConBiometria}
+            cargando={vm.verificando}
+          />
+          <Text style={styles.separador}>o usa tu correo y contraseña</Text>
+        </View>
+      ) : null}
+
+      {vm.aviso ? <Text style={styles.aviso}>{vm.aviso}</Text> : null}
 
       <View style={styles.formulario}>
         <Text style={styles.etiqueta}>Correo</Text>
@@ -51,12 +61,12 @@ export default function LoginScreen() {
           secureTextEntry
           autoComplete="password"
           textContentType="password"
-          onSubmitEditing={alEntrar}
+          onSubmitEditing={vm.entrar}
         />
 
         {vm.error ? <Text style={styles.error}>{vm.error}</Text> : null}
 
-        <Boton titulo="Entrar" onPress={alEntrar} deshabilitado={!vm.puedeEnviar} cargando={vm.cargando} />
+        <Boton titulo="Entrar" onPress={vm.entrar} deshabilitado={!vm.puedeEnviar} cargando={vm.cargando} />
       </View>
 
       <Text style={styles.ayuda}>
@@ -76,6 +86,10 @@ const styles = StyleSheet.create({
   encabezado: { marginBottom: 32 },
   titulo: { fontSize: 32, fontWeight: '800', color: colores.primario },
   subtitulo: { fontSize: 16, color: colores.textoSecundario, marginTop: 4 },
+  biometria: { gap: 12, marginBottom: 16 },
+  saludo: { fontSize: 16, fontWeight: '600', color: colores.texto },
+  separador: { fontSize: 14, color: colores.textoSecundario, textAlign: 'center' },
+  aviso: { fontSize: 14, color: colores.error, marginBottom: 12 },
   formulario: { gap: 8 },
   etiqueta: { fontSize: 14, fontWeight: '600', color: colores.texto, marginTop: 8 },
   campo: {
