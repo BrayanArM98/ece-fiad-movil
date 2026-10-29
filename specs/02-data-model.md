@@ -146,7 +146,7 @@ Clinica {                      // configurada en src/config/clinica.ts
 | Dato | Dónde | Motivo |
 |------|-------|--------|
 | Entidades clínicas | API REST (datos de ejemplo mientras tanto) | Fuente única de la clínica |
-| Sesion | Almacenamiento seguro del teléfono | Contiene datos de acceso |
+| Sesion | Almacenamiento seguro del teléfono, solo con biometría activa | Contiene datos de acceso |
 | Adjunto | Archivos locales del teléfono | La API aún no recibe imágenes |
 | RecordatorioProgramado | Archivo JSON en el teléfono | Evitar programar dos avisos para la misma cita |
 | Clinica | Configuración de la app | La API no guarda datos de la clínica |

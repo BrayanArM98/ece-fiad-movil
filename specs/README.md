@@ -15,7 +15,7 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 
 | ID | Feature | Spec | Estado |
 |----|---------|------|--------|
-| F01 | Iniciar sesión con biometría | [F01](features/F01-inicio-sesion-biometria.md) | Especificada |
+| F01 | Iniciar sesión con biometría | [F01](features/F01-inicio-sesion-biometria.md) | Implementada |
 | F02 | Ver la agenda del día | [F02](features/F02-agenda-del-dia.md) | Validada |
 | F03 | Consultar el historial de un paciente | [F03](features/F03-historial-paciente.md) | Validada |
 | F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Validada |
