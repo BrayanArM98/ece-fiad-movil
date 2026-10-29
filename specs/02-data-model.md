@@ -2,7 +2,7 @@
 
 ## Origen de los datos
 
-Las entidades clínicas son las mismas que expone la API REST del sistema de la clínica. La app no inventa campos nuevos para ellas: usa la misma forma que devuelve la API, para que cambiar de datos de ejemplo a datos reales no obligue a modificar pantallas.
+Las entidades clínicas son las mismas que expone la API REST del sistema de la clínica. La app no inventa campos nuevos para ellas: usa la misma forma que devuelve la API, para que cambiar de datos de ejemplo a datos reales no obligue a modificar pantallas. Cómo se conecta la app a la API está en `03-api.md`.
 
 Todas las respuestas de la API llegan con esta envoltura:
 

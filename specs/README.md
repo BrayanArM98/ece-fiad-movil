@@ -9,6 +9,7 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 | [`00-project.md`](00-project.md) | Problema, usuarios, propuesta, MVP y alcance |
 | [`01-navigation.md`](01-navigation.md) | Mapa de pantallas, rutas, parámetros y reglas de navegación |
 | [`02-data-model.md`](02-data-model.md) | Entidades, origen de cada dato y pendientes con la API |
+| [`03-api.md`](03-api.md) | Conexión con la API: configuración, endpoints y reglas del cliente HTTP |
 | [`features/`](features/) | Una especificación por feature del MVP |
 
 ## Features del MVP
