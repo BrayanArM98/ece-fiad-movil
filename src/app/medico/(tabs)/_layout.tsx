@@ -1,6 +1,6 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 
+import { iconoPestana } from '@/components/IconoPestana';
 import { colores } from '@/theme/colores';
 
 /**
@@ -20,21 +20,21 @@ export default function MedicoTabsLayout() {
         options={{
           title: 'Agenda',
           headerTitle: 'Agenda del día',
-          tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size} color={color} />,
+          tabBarIcon: iconoPestana('calendar-outline'),
         }}
       />
       <Tabs.Screen
         name="pacientes"
         options={{
           title: 'Pacientes',
-          tabBarIcon: ({ color, size }) => <Ionicons name="people-outline" size={size} color={color} />,
+          tabBarIcon: iconoPestana('people-outline'),
         }}
       />
       <Tabs.Screen
         name="perfil"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-circle-outline" size={size} color={color} />,
+          tabBarIcon: iconoPestana('person-circle-outline'),
         }}
       />
     </Tabs>

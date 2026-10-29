@@ -1,7 +1,7 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, Tabs } from 'expo-router';
 import { useEffect } from 'react';
 
+import { iconoPestana } from '@/components/IconoPestana';
 import { alTocarNotificacion, configurar } from '@/services/notificacionesService';
 import { colores } from '@/theme/colores';
 
@@ -27,21 +27,21 @@ export default function PacienteTabsLayout() {
         name="mis-citas"
         options={{
           title: 'Mis citas',
-          tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size} color={color} />,
+          tabBarIcon: iconoPestana('calendar-outline'),
         }}
       />
       <Tabs.Screen
         name="clinica"
         options={{
           title: 'Clínica',
-          tabBarIcon: ({ color, size }) => <Ionicons name="location-outline" size={size} color={color} />,
+          tabBarIcon: iconoPestana('location-outline'),
         }}
       />
       <Tabs.Screen
         name="perfil"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-circle-outline" size={size} color={color} />,
+          tabBarIcon: iconoPestana('person-circle-outline'),
         }}
       />
     </Tabs>
