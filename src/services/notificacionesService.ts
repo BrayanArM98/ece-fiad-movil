@@ -65,6 +65,8 @@ export async function contarProgramadas(): Promise<number> {
  * y las que toque mientras está abierta. Devuelve la función para dejar de escuchar.
  */
 export function alTocarNotificacion(accion: () => void): () => void {
+  // En la vista web (solo para revisar el diseño) no existen las notificaciones locales
+  if (Platform.OS === 'web') return () => {};
   if (Notifications.getLastNotificationResponse()) {
     accion();
     Notifications.clearLastNotificationResponse();

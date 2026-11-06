@@ -1,9 +1,13 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ChevronRight, Droplet } from 'lucide-react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { Avatar } from '@/components/ui/Avatar';
+import { Tarjeta } from '@/components/ui/Tarjeta';
+import { Texto } from '@/components/ui/Texto';
 import type { Paciente } from '@/models/Paciente';
 import { colores } from '@/theme/colores';
-import { calcularEdad, nombreCompleto } from '@/utils/pacientes';
+import { radios } from '@/theme/tema';
+import { calcularEdad, nombreCompleto, textoGrupoSanguineo } from '@/utils/pacientes';
 
 interface FilaPacienteProps {
   paciente: Paciente;
@@ -11,38 +15,44 @@ interface FilaPacienteProps {
 }
 
 /**
- * Fila de la lista de Pacientes (F03).
+ * Paciente en la lista de Pacientes (F03): avatar, nombre, edad, documento y grupo sanguíneo.
  */
 export function FilaPaciente({ paciente, onPress }: FilaPacienteProps) {
+  const nombre = nombreCompleto(paciente);
+  const edad = calcularEdad(paciente.fechaNacimiento);
+
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      style={({ pressed }) => [styles.fila, pressed && styles.presionada]}
-    >
+    <Tarjeta onPress={onPress} etiquetaAccesible={`${nombre}, ${edad} años. Abrir historial`} style={styles.fila}>
+      <Avatar nombre={nombre} tamano={46} />
       <View style={styles.datos}>
-        <Text style={styles.nombre}>{nombreCompleto(paciente)}</Text>
-        <Text style={styles.detalle}>
-          {calcularEdad(paciente.fechaNacimiento)} años · {paciente.numeroDocumento}
-        </Text>
+        <Texto variante="cuerpoFuerte" numberOfLines={1}>
+          {nombre}
+        </Texto>
+        <Texto variante="secundario" color={colores.pizarra} numberOfLines={1}>
+          {edad} años · {paciente.numeroDocumento}
+        </Texto>
       </View>
-      <Ionicons name="chevron-forward" size={20} color={colores.textoSecundario} />
-    </Pressable>
+      <View style={styles.sangre}>
+        <Droplet size={12} color={colores.coral} fill={colores.coral} />
+        <Texto variante="etiqueta" color={colores.coral}>
+          {textoGrupoSanguineo(paciente.grupoSanguineo)}
+        </Texto>
+      </View>
+      <ChevronRight size={18} color={colores.niebla} />
+    </Tarjeta>
   );
 }
 
 const styles = StyleSheet.create({
-  fila: {
+  fila: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },
+  datos: { flex: 1, gap: 2 },
+  sangre: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colores.superficie,
-    borderWidth: 1,
-    borderColor: colores.borde,
-    borderRadius: 12,
-    padding: 16,
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: radios.total,
+    backgroundColor: colores.coralSuave,
   },
-  presionada: { backgroundColor: colores.primarioSuave },
-  datos: { flex: 1, gap: 2 },
-  nombre: { fontSize: 16, fontWeight: '600', color: colores.texto },
-  detalle: { fontSize: 14, color: colores.textoSecundario },
 });

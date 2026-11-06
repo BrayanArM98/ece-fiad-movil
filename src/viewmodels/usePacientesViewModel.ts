@@ -2,16 +2,18 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { Paciente } from '@/models/Paciente';
 import { obtenerActivos } from '@/services/pacientesService';
-import { ordenarPorApellido } from '@/utils/pacientes';
+import { coincideBusqueda, ordenarPorApellido } from '@/utils/pacientes';
 
 export type EstadoPacientes = 'cargando' | 'listo' | 'error';
 
 /**
- * ViewModel de la pestaña Pacientes: pacientes activos en orden alfabético por apellido (F03).
+ * ViewModel de la pestaña Pacientes: pacientes activos en orden alfabético por apellido (F03),
+ * con búsqueda por nombre o documento que ignora acentos y mayúsculas.
  */
 export function usePacientesViewModel() {
   const [estado, setEstado] = useState<EstadoPacientes>('cargando');
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [busqueda, setBusqueda] = useState('');
   const [refrescando, setRefrescando] = useState(false);
 
   const cargar = useCallback(async () => {
@@ -44,5 +46,14 @@ export function usePacientesViewModel() {
     setRefrescando(false);
   }
 
-  return { estado, pacientes, refrescando, reintentar, refrescar };
+  return {
+    estado,
+    pacientes: pacientes.filter((p) => coincideBusqueda(p, busqueda)),
+    total: pacientes.length,
+    busqueda,
+    setBusqueda,
+    refrescando,
+    reintentar,
+    refrescar,
+  };
 }

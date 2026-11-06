@@ -1,30 +1,37 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { Texto } from '@/components/ui/Texto';
 import type { EstadoCita } from '@/models/Cita';
-
-const COLOR_ESTADO: Record<EstadoCita, { fondo: string; texto: string }> = {
-  Pendiente: { fondo: '#FEF3C7', texto: '#92400E' },
-  Confirmada: { fondo: '#E0F2F7', texto: '#0E7490' },
-  Completada: { fondo: '#DCFCE7', texto: '#166534' },
-  Cancelada: { fondo: '#F1F5F9', texto: '#64748B' },
-  NoAsistio: { fondo: '#FEE2E2', texto: '#991B1B' },
-};
+import { COLOR_ESTADO } from '@/theme/colores';
+import { radios } from '@/theme/tema';
 
 interface EtiquetaEstadoCitaProps {
   estado: EstadoCita;
   texto: string;
 }
 
+/** Insignia del estado de la cita: punto de color y texto, con los colores de la agenda web. */
 export function EtiquetaEstadoCita({ estado, texto }: EtiquetaEstadoCitaProps) {
-  const color = COLOR_ESTADO[estado];
+  const { color, fondo } = COLOR_ESTADO[estado];
   return (
-    <View style={[styles.etiqueta, { backgroundColor: color.fondo }]}>
-      <Text style={[styles.texto, { color: color.texto }]}>{texto}</Text>
+    <View style={[styles.etiqueta, { backgroundColor: fondo }]} accessibilityLabel={`Estado: ${texto}`}>
+      <View style={[styles.punto, { backgroundColor: color }]} />
+      <Texto variante="etiqueta" color={color}>
+        {texto}
+      </Texto>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  etiqueta: { alignSelf: 'flex-start', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
-  texto: { fontSize: 12, fontWeight: '600' },
+  etiqueta: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: radios.total,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  punto: { width: 6, height: 6, borderRadius: 3 },
 });

@@ -39,3 +39,15 @@ export function ordenarPorApellido(pacientes: Paciente[]): Paciente[] {
       a.nombres.localeCompare(b.nombres, 'es', { sensitivity: 'base' })
   );
 }
+
+/** Texto sin acentos y en minúsculas, para comparar búsquedas. */
+export function normalizar(texto: string): string {
+  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+/** El paciente coincide si su nombre o documento contienen el término buscado. */
+export function coincideBusqueda(paciente: Paciente, termino: string): boolean {
+  const limpio = normalizar(termino.trim());
+  if (!limpio) return true;
+  return normalizar(`${paciente.nombres} ${paciente.apellidos} ${paciente.numeroDocumento}`).includes(limpio);
+}

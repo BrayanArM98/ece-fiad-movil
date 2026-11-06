@@ -1,3 +1,4 @@
+import { API_URL, usarApi } from '@/config/api';
 import { useSesion } from '@/context/SesionContext';
 import { cancelarTodos } from '@/services/recordatoriosService';
 import { borrarSesion } from '@/services/sesionStorage';
@@ -10,8 +11,7 @@ import { borrarSesion } from '@/services/sesionStorage';
  */
 export function usePerfilViewModel() {
   const { sesion, cerrarSesion } = useSesion();
-
-  const rolTexto = sesion?.rol === 'medico' ? 'Médico' : 'Paciente';
+  const esMedico = sesion?.rol === 'medico';
 
   async function salir() {
     await borrarSesion();
@@ -23,7 +23,10 @@ export function usePerfilViewModel() {
 
   return {
     nombre: sesion?.nombre ?? '',
-    rolTexto,
+    esMedico,
+    rolTexto: esMedico ? 'Médico' : 'Paciente',
+    biometriaActiva: !!sesion?.biometriaActiva,
+    origenDatos: usarApi ? API_URL.replace(/^https?:\/\//, '') : 'Datos de ejemplo',
     cerrarSesion: salir,
   };
 }

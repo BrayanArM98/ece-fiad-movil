@@ -3,37 +3,34 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSesion } from '@/context/SesionContext';
 import type { Cita } from '@/models/Cita';
 import { obtenerTodas } from '@/services/citasService';
-import { calcularResumen, prepararAgenda, type ResumenAgenda } from '@/utils/agenda';
-import { formatearFechaLarga } from '@/utils/fechas';
+import { calcularResumen, indiceAhora, prepararAgenda, siguienteCita } from '@/utils/agenda';
+import { formatearFechaLarga, formatearHora } from '@/utils/fechas';
+import { nombreCorto, saludo, tiempoRelativo } from '@/utils/tiempo';
+import { useReloj } from '@/viewmodels/useReloj';
 
 export type EstadoAgenda = 'cargando' | 'listo' | 'error';
 
 /**
  * ViewModel de la Agenda del día (specs/features/F02-agenda-del-dia.md).
- * Obtiene las citas, aplica las reglas de la agenda y expone los estados de la pantalla.
+ * Obtiene las citas, aplica las reglas de la agenda y expone los estados de la pantalla,
+ * además del siguiente paciente y el avance del día.
  */
 export function useAgendaViewModel() {
   const { sesion, cerrarSesion } = useSesion();
   const idDoctor = sesion?.idDoctor;
-
+  const ahora = useReloj();
   const [estado, setEstado] = useState<EstadoAgenda>('cargando');
   const [citas, setCitas] = useState<Cita[]>([]);
-  const [resumen, setResumen] = useState<ResumenAgenda>({ total: 0, pendientes: 0 });
   const [refrescando, setRefrescando] = useState(false);
 
   const cargar = useCallback(async () => {
     if (!idDoctor) return;
-
     const respuesta = await obtenerTodas();
-
     if (!respuesta.exitoso || !respuesta.datos) {
       setEstado('error');
       return;
     }
-
-    const agenda = prepararAgenda(respuesta.datos, idDoctor, new Date());
-    setCitas(agenda);
-    setResumen(calcularResumen(agenda));
+    setCitas(prepararAgenda(respuesta.datos, idDoctor, new Date()));
     setEstado('listo');
   }, [idDoctor]);
 
@@ -57,11 +54,24 @@ export function useAgendaViewModel() {
     setRefrescando(false);
   }
 
+  const siguiente = siguienteCita(citas, ahora);
+  const vigentes = citas.filter((cita) => cita.estado !== 'Cancelada');
+
   return {
     estado,
-    citas,
-    resumen,
-    fechaHoy: formatearFechaLarga(new Date()),
+    vigentes,
+    canceladas: citas.filter((cita) => cita.estado === 'Cancelada'),
+    resumen: calcularResumen(citas),
+    siguiente,
+    siguienteHora: siguiente ? formatearHora(new Date(siguiente.fechaHora)) : '',
+    siguienteFalta: siguiente ? tiempoRelativo(new Date(siguiente.fechaHora), ahora) : '',
+    indiceAhora: indiceAhora(citas, ahora),
+    horaActual: formatearHora(ahora),
+    ahora,
+    saludo: saludo(ahora),
+    nombre: nombreCorto(sesion?.nombre ?? ''),
+    nombreCompleto: sesion?.nombre ?? '',
+    fechaHoy: formatearFechaLarga(ahora),
     refrescando,
     reintentar,
     refrescar,

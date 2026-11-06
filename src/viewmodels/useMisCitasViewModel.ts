@@ -7,6 +7,9 @@ import { obtenerTodos as obtenerDoctores } from '@/services/doctoresService';
 import { consultarPermiso, solicitarPermiso, type EstadoPermiso } from '@/services/notificacionesService';
 import { sincronizar } from '@/services/recordatoriosService';
 import { prepararCitasPaciente } from '@/utils/citasPaciente';
+import { formatearFechaLarga } from '@/utils/fechas';
+import { primerNombre, saludo } from '@/utils/tiempo';
+import { useReloj } from '@/viewmodels/useReloj';
 
 export type EstadoMisCitas = 'cargando' | 'listo' | 'error';
 
@@ -21,6 +24,7 @@ export interface CitaConEspecialidad extends Cita {
 export function useMisCitasViewModel() {
   const { sesion } = useSesion();
   const idPaciente = sesion?.idPaciente;
+  const ahora = useReloj();
 
   const [estado, setEstado] = useState<EstadoMisCitas>('cargando');
   const [citas, setCitas] = useState<CitaConEspecialidad[]>([]);
@@ -79,5 +83,20 @@ export function useMisCitasViewModel() {
     setRefrescando(false);
   }
 
-  return { estado, citas, permiso, refrescando, activarRecordatorios, reintentar, refrescar };
+  return {
+    estado,
+    citas,
+    proxima: citas[0] ?? null,
+    siguientes: citas.slice(1),
+    ahora,
+    saludo: saludo(ahora),
+    nombre: primerNombre(sesion?.nombre ?? ''),
+    nombreCompleto: sesion?.nombre ?? '',
+    fechaHoy: formatearFechaLarga(ahora),
+    permiso,
+    refrescando,
+    activarRecordatorios,
+    reintentar,
+    refrescar,
+  };
 }

@@ -1,8 +1,11 @@
-import { StyleSheet, Switch, Text, View } from 'react-native';
+import { FlaskConical } from 'lucide-react-native';
+import { StyleSheet, Switch, View } from 'react-native';
 
 import { Boton } from '@/components/Boton';
+import { Texto } from '@/components/ui/Texto';
 import { API_URL, usarApi } from '@/config/api';
 import { colores } from '@/theme/colores';
+import { radios } from '@/theme/tema';
 import { useSimulacionViewModel } from '@/viewmodels/useSimulacionViewModel';
 
 /**
@@ -14,21 +17,31 @@ export function PanelSimulacion() {
 
   return (
     <View style={styles.panel}>
-      <Text style={styles.titulo}>Modo de prueba</Text>
-      <Text style={styles.ayuda}>Simula casos de error para validar los criterios de las specs.</Text>
-      <Text style={styles.etiqueta}>Origen de los datos: {usarApi ? `API (${API_URL})` : 'datos de ejemplo'}</Text>
-
+      <View style={styles.cabecera}>
+        <FlaskConical size={18} color={colores.ambar} />
+        <Texto variante="cuerpoFuerte">Modo de prueba</Texto>
+      </View>
+      <Texto variante="secundario" color={colores.pizarra}>
+        Simula casos de error para validar los criterios de las specs. Origen de los datos:{' '}
+        {usarApi ? `API (${API_URL})` : 'datos de ejemplo'}.
+      </Texto>
       <Fila etiqueta="Simular falla de red" valor={vm.fallaDeRed} onCambiar={vm.cambiarFallaDeRed} />
       <Fila etiqueta="Simular sin citas" valor={vm.sinCitas} onCambiar={vm.cambiarSinCitas} />
-
       {vm.esPaciente ? (
         <View style={styles.recordatorios}>
-          <Text style={styles.etiqueta}>
-            Recordatorios programados: {vm.programados ?? '—'}
-          </Text>
-          <Boton titulo="Actualizar conteo" variante="secundario" onPress={vm.actualizarProgramados} />
-          <Boton titulo="Enviar recordatorio de prueba (10 s)" variante="secundario" onPress={vm.enviarPrueba} />
-          {vm.mensaje ? <Text style={styles.ayuda}>{vm.mensaje}</Text> : null}
+          <Texto variante="secundario">Recordatorios programados: {vm.programados ?? '—'}</Texto>
+          <Boton titulo="Actualizar conteo" variante="secundario" tamano="compacto" onPress={vm.actualizarProgramados} />
+          <Boton
+            titulo="Enviar recordatorio de prueba (10 s)"
+            variante="secundario"
+            tamano="compacto"
+            onPress={vm.enviarPrueba}
+          />
+          {vm.mensaje ? (
+            <Texto variante="secundario" color={colores.pizarra}>
+              {vm.mensaje}
+            </Texto>
+          ) : null}
         </View>
       ) : null}
     </View>
@@ -38,11 +51,13 @@ export function PanelSimulacion() {
 function Fila({ etiqueta, valor, onCambiar }: { etiqueta: string; valor: boolean; onCambiar: (v: boolean) => void }) {
   return (
     <View style={styles.fila}>
-      <Text style={styles.etiqueta}>{etiqueta}</Text>
+      <Texto variante="cuerpo" style={styles.etiqueta}>
+        {etiqueta}
+      </Texto>
       <Switch
         value={valor}
         onValueChange={onCambiar}
-        trackColor={{ true: colores.primario, false: colores.borde }}
+        trackColor={{ true: colores.marea, false: colores.linea }}
         accessibilityLabel={etiqueta}
       />
     </View>
@@ -51,17 +66,15 @@ function Fila({ etiqueta, valor, onCambiar }: { etiqueta: string; valor: boolean
 
 const styles = StyleSheet.create({
   panel: {
-    backgroundColor: colores.superficie,
-    borderWidth: 1,
-    borderColor: colores.borde,
+    borderWidth: 1.5,
+    borderColor: colores.linea,
     borderStyle: 'dashed',
-    borderRadius: 12,
+    borderRadius: radios.l,
     padding: 16,
     gap: 8,
   },
-  titulo: { fontSize: 16, fontWeight: '700', color: colores.texto },
-  ayuda: { fontSize: 13, color: colores.textoSecundario, marginBottom: 4 },
+  cabecera: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   fila: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
-  etiqueta: { fontSize: 15, color: colores.texto, flex: 1 },
-  recordatorios: { gap: 8, marginTop: 8, paddingTop: 12, borderTopWidth: 1, borderTopColor: colores.borde },
+  etiqueta: { flex: 1 },
+  recordatorios: { gap: 8, marginTop: 8, paddingTop: 12, borderTopWidth: 1, borderTopColor: colores.linea },
 });
