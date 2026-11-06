@@ -1,6 +1,6 @@
 # Diseño "Marea"
 
-**Estado:** En desarrollo
+**Estado:** Implementada
 
 La app móvil usa la misma identidad que ECE-FIAD Web: paleta "Marea", Schibsted Grotesk para títulos y cifras, y Public Sans para el texto. Todo se construye con `StyleSheet` y componentes propios para que funcione en Expo Go sin compilar código nativo.
 
@@ -45,8 +45,11 @@ En `src/components/`: `Boton` (variantes primario, secundario, suave, claro, fan
 | Agenda (médico) | Saludo según la hora, tarjeta de avance del día (anillo y cifras), tarjeta "Siguiente paciente" con cuenta regresiva en vivo, línea de tiempo con marca coral de la hora actual y las canceladas al final. |
 | Pacientes (médico) | Encabezado con buscador que ignora acentos; filas con avatar, edad, documento y grupo sanguíneo. |
 | Mis citas (paciente) | Saludo, tarjeta de la próxima cita estilo boleto (calendario, hora, cuenta regresiva, doctor, motivo y "Cómo llegar"), aviso de recordatorios y lista "Más adelante". |
-| Clínica (paciente) | Mapa a pantalla completa con marcador propio y tarjeta flotante con distancia, dirección y acciones. |
-| Perfil | Avatar grande, tipo de cuenta, estado de la biometría, servidor y cerrar sesión. |
+| Clínica (paciente) | Mapa a pantalla completa con la clínica ECE-FIAD y hospitales reales; filtros y carrusel de tarjetas sincronizado con el mapa. |
+| Perfil | Avatar grande, datos del expediente (especialidad y horario, o nacimiento y grupo sanguíneo), seguridad y cerrar sesión. |
+| Detalle de cita | Hora en grande, paciente con acceso al historial, motivo y notas, y botones grandes para registrar el resultado. |
+| Historial | Tarjeta del paciente con edad, grupo sanguíneo y documento; banda de alergias coral o verde; evoluciones que se expanden con notas y fotos; botón flotante "Nueva evolución". |
+| Nueva evolución | Formulario en tarjetas, fotos con accesos a cámara y galería, y botón "Guardar evolución" fijo abajo. |
 
 ## Movimiento
 
@@ -69,5 +72,5 @@ Todas vienen incluidas en Expo Go SDK 58: `react-native-svg`, `expo-linear-gradi
 
 - [x] Tokens, fuentes y componentes base.
 - [x] Login, Agenda, Pacientes, Mis citas, Clínica y Perfil.
-- [ ] Detalle de cita, Historial y Nueva evolución.
-- [ ] Inicio de sesión real con la API.
+- [x] Detalle de cita, Historial y Nueva evolución.
+- [x] Inicio de sesión real con la API.

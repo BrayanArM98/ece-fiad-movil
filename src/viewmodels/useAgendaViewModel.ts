@@ -1,3 +1,4 @@
+import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useSesion } from '@/context/SesionContext';
@@ -25,7 +26,8 @@ export function useAgendaViewModel() {
 
   const cargar = useCallback(async () => {
     if (!idDoctor) return;
-    const respuesta = await obtenerTodas();
+    const hoy = new Date();
+    const respuesta = await obtenerTodas({ desde: hoy, hasta: hoy });
     if (!respuesta.exitoso || !respuesta.datos) {
       setEstado('error');
       return;
@@ -40,8 +42,14 @@ export function useAgendaViewModel() {
       cerrarSesion();
       return;
     }
-    cargar().catch(() => setEstado('error'));
-  }, [idDoctor, cargar, cerrarSesion]);
+  }, [idDoctor, cerrarSesion]);
+
+  // Se recarga al volver a la pestaña, por ejemplo después de registrar el resultado de una cita
+  useFocusEffect(
+    useCallback(() => {
+      cargar().catch(() => setEstado('error'));
+    }, [cargar])
+  );
 
   async function reintentar() {
     setEstado('cargando');

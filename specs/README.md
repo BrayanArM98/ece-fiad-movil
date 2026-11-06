@@ -9,7 +9,8 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 | [`00-project.md`](00-project.md) | Problema, usuarios, propuesta, MVP y alcance |
 | [`01-navigation.md`](01-navigation.md) | Mapa de pantallas, rutas, parámetros y reglas de navegación |
 | [`02-data-model.md`](02-data-model.md) | Entidades, origen de cada dato y pendientes con la API |
-| [`03-api.md`](03-api.md) | Conexión con la API: configuración, endpoints y reglas del cliente HTTP |
+| [`03-api.md`](03-api.md) | Conexión con la API: configuración, inicio de sesión, endpoints y reglas del cliente HTTP |
+| [`04-diseno.md`](04-diseno.md) | Sistema de diseño "Marea": tokens, componentes y pantallas |
 | [`features/`](features/) | Una especificación por feature del MVP |
 
 ## Features del MVP
@@ -22,7 +23,7 @@ Este proyecto se desarrolla con **Spec-Driven Development**: ninguna feature se 
 | F04 | Registrar la evolución de una consulta | [F04](features/F04-registrar-evolucion.md) | Validada |
 | F05 | Adjuntar una fotografía a la evolución | [F05](features/F05-fotografia-evolucion.md) | Implementada |
 | F06 | Ver mis citas y recibir recordatorios | [F06](features/F06-mis-citas-recordatorios.md) | Implementada |
-| F07 | Ubicar la clínica en el mapa | [F07](features/F07-ubicar-clinica.md) | Implementada |
+| F07 | Ubicar la clínica y hospitales cercanos | [F07](features/F07-ubicar-clinica.md) | Implementada |
 
 Estados posibles: Especificada → En desarrollo → Implementada → Validada. Una feature solo pasa a **Validada** cuando todos sus criterios de aceptación están marcados.
 
@@ -63,7 +64,7 @@ Todas las specs de `features/` siguen la misma estructura:
 
 ## Validación de casos de error
 
-Mientras la app usa datos de ejemplo, los casos de error no ocurren por sí solos. Para validarlos, la pestaña Perfil incluye un **modo de prueba** (solo en desarrollo) que simula una falla de red o una lista de citas vacía. Para el paciente también muestra cuántos recordatorios hay programados y envía un recordatorio de prueba en 10 segundos, para validar F06 sin esperar un día. Con él se comprueban los criterios de aceptación de los estados de error y de lista vacía. Al conectar la API, estos casos se producen de verdad.
+Con los datos de ejemplo, los casos de error no ocurren por sí solos. Para validarlos, la pestaña Perfil incluye un **modo de prueba** (solo en desarrollo) que simula una falla de red o una lista de citas vacía. Para el paciente también muestra cuántos recordatorios hay programados y envía un recordatorio de prueba en 10 segundos, para validar F06 sin esperar un día. Con él se comprueban los criterios de aceptación de los estados de error y de lista vacía. Con la API, estos casos se producen de verdad.
 
 ## Trazabilidad
 

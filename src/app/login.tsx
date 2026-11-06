@@ -145,6 +145,11 @@ export default function LoginScreen() {
               cargando={vm.cargando}
               ancho
             />
+            {vm.lento ? (
+              <Texto variante="secundario" color={colores.pizarra} centrado style={styles.lento}>
+                Despertando el servidor… la primera vez del día puede tardar hasta un minuto.
+              </Texto>
+            ) : null}
           </View>
 
           <View style={styles.demo}>
@@ -221,6 +226,7 @@ const styles = StyleSheet.create({
   aviso: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 12, borderRadius: radios.m },
   textoAviso: { flex: 1 },
   boton: { marginTop: 4 },
+  lento: { marginTop: 10 },
   demo: { gap: 10, marginTop: 8 },
   chips: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
   chip: {

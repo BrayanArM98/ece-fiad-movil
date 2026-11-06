@@ -5,6 +5,7 @@ import type { Sesion } from '@/models/Sesion';
 /**
  * Sesión guardada en el almacenamiento seguro del teléfono (specs/features/F01-inicio-sesion-biometria.md).
  * Solo se guarda cuando el usuario activa la biometría; nunca se usa almacenamiento normal.
+ * Incluye el token de la API, así que solo se entrega después de reconocer la huella o el rostro.
  */
 const CLAVE = 'ece-fiad.sesion';
 
@@ -16,9 +17,13 @@ export async function leerSesion(): Promise<Sesion | null> {
   try {
     const texto = await SecureStore.getItemAsync(CLAVE);
     if (!texto) return null;
-
     const sesion = JSON.parse(texto) as Sesion;
-    if (sesion.rol !== 'medico' && sesion.rol !== 'paciente') throw new Error('Sesión inválida');
+    const valida =
+      (sesion.rol === 'medico' || sesion.rol === 'paciente') &&
+      typeof sesion.token === 'string' &&
+      typeof sesion.expiraUtc === 'string';
+    // Una sesión guardada por una versión anterior de la app no trae token: se pide la contraseña
+    if (!valida) throw new Error('Sesión inválida');
     return sesion;
   } catch {
     // Un valor dañado no debe impedir entrar con contraseña

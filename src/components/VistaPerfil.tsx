@@ -1,16 +1,41 @@
-import { Fingerprint, HeartPulse, LogOut, Server, Stethoscope, type LucideIcon } from 'lucide-react-native';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import {
+  CalendarDays,
+  Clock,
+  Droplet,
+  Fingerprint,
+  HeartPulse,
+  IdCard,
+  LogOut,
+  Mail,
+  Phone,
+  Server,
+  Stethoscope,
+  type LucideIcon,
+} from 'lucide-react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Boton } from '@/components/Boton';
 import { PanelSimulacion } from '@/components/PanelSimulacion';
 import { Avatar } from '@/components/ui/Avatar';
+import { Esqueleto } from '@/components/ui/Esqueleto';
 import { EncabezadoMarea } from '@/components/ui/Marea';
 import { Tarjeta } from '@/components/ui/Tarjeta';
 import { Texto } from '@/components/ui/Texto';
 import { colores } from '@/theme/colores';
 import { ALTO_BARRA_PESTANAS, radios } from '@/theme/tema';
-import { usePerfilViewModel } from '@/viewmodels/usePerfilViewModel';
+import { usePerfilViewModel, type DatoPerfil } from '@/viewmodels/usePerfilViewModel';
+
+const ICONO_DATO: Record<DatoPerfil['clave'], LucideIcon> = {
+  especialidad: Stethoscope,
+  horario: Clock,
+  telefono: Phone,
+  nacimiento: CalendarDays,
+  sangre: Droplet,
+  documento: IdCard,
+  direccion: IdCard,
+};
 
 /**
  * Vista de la pestaña Perfil. La usan las pestañas del médico y del paciente.
@@ -19,6 +44,13 @@ export function VistaPerfil() {
   const vm = usePerfilViewModel();
   const { bottom } = useSafeAreaInsets();
   const IconoRol = vm.esMedico ? Stethoscope : HeartPulse;
+
+  function confirmarSalida() {
+    Alert.alert('¿Cerrar sesión?', 'Tendrás que volver a entrar con tu correo y contraseña.', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Cerrar sesión', style: 'destructive', onPress: vm.cerrarSesion },
+    ]);
+  }
 
   return (
     <ScrollView
@@ -44,20 +76,51 @@ export function VistaPerfil() {
       </EncabezadoMarea>
 
       <View style={styles.cuerpo}>
-        <Tarjeta style={styles.lista}>
-          <Fila icono={IconoRol} titulo="Tipo de cuenta" valor={vm.rolTexto} />
-          <View style={styles.divisor} />
-          <Fila
-            icono={Fingerprint}
-            titulo="Entrar con huella o rostro"
-            valor={vm.biometriaActiva ? 'Activado' : 'Desactivado'}
-            activo={vm.biometriaActiva}
-          />
-          <View style={styles.divisor} />
-          <Fila icono={Server} titulo="Servidor" valor={vm.origenDatos} />
-        </Tarjeta>
+        <Animated.View entering={FadeInDown.duration(400)} style={styles.seccion}>
+          <Texto variante="mayusculas" color={colores.niebla}>
+            {vm.esMedico ? 'Datos profesionales' : 'Mis datos'}
+          </Texto>
+          <Tarjeta style={styles.lista}>
+            <Fila icono={Mail} titulo="Correo" valor={vm.correo} />
+            {vm.datos === null
+              ? [0, 1, 2].map((i) => (
+                  <View key={i}>
+                    <View style={styles.divisor} />
+                    <View style={styles.fila}>
+                      <Esqueleto ancho={38} alto={38} radio={12} />
+                      <View style={styles.textosFila}>
+                        <Esqueleto ancho="40%" alto={10} />
+                        <Esqueleto ancho="70%" alto={14} style={styles.espacio} />
+                      </View>
+                    </View>
+                  </View>
+                ))
+              : vm.datos.map((dato) => (
+                  <View key={dato.clave}>
+                    <View style={styles.divisor} />
+                    <Fila icono={ICONO_DATO[dato.clave]} titulo={dato.titulo} valor={dato.valor} />
+                  </View>
+                ))}
+          </Tarjeta>
+        </Animated.View>
 
-        <Boton titulo="Cerrar sesión" icono={LogOut} variante="peligro" onPress={vm.cerrarSesion} ancho />
+        <Animated.View entering={FadeInDown.delay(80).duration(400)} style={styles.seccion}>
+          <Texto variante="mayusculas" color={colores.niebla}>
+            Seguridad
+          </Texto>
+          <Tarjeta style={styles.lista}>
+            <Fila
+              icono={Fingerprint}
+              titulo="Entrar con huella o rostro"
+              valor={vm.biometriaActiva ? 'Activado' : 'Desactivado'}
+              activo={vm.biometriaActiva}
+            />
+            <View style={styles.divisor} />
+            <Fila icono={Server} titulo="Servidor" valor={vm.origenDatos} />
+          </Tarjeta>
+        </Animated.View>
+
+        <Boton titulo="Cerrar sesión" icono={LogOut} variante="peligro" onPress={confirmarSalida} ancho />
 
         <PanelSimulacion />
       </View>
@@ -75,7 +138,7 @@ function Fila({ icono: Icono, titulo, valor, activo }: { icono: LucideIcon; titu
         <Texto variante="secundario" color={colores.pizarra}>
           {titulo}
         </Texto>
-        <Texto variante="cuerpoFuerte" color={activo ? colores.verde : colores.tinta} numberOfLines={1}>
+        <Texto variante="cuerpoFuerte" color={activo ? colores.verde : colores.tinta} numberOfLines={2}>
           {valor}
         </Texto>
       </View>
@@ -97,6 +160,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.16)',
   },
   cuerpo: { paddingHorizontal: 20, gap: 20 },
+  seccion: { gap: 8 },
   lista: { paddingVertical: 4 },
   fila: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 12 },
   iconoFila: {
@@ -108,5 +172,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textosFila: { flex: 1 },
+  espacio: { marginTop: 6 },
   divisor: { height: 1, backgroundColor: colores.linea, marginLeft: 52 },
 });

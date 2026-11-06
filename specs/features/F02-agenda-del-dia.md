@@ -55,6 +55,16 @@ Médico.
 
 El médico ve en una sola pantalla todas sus citas de hoy, ordenadas por hora, y puede entrar al detalle de cualquiera.
 
+## Detalle de la cita y resultado
+
+Desde el detalle de la cita el médico registra cómo terminó la consulta con `PATCH /api/Citas/{id}/estado`:
+
+- **Confirmar**: solo para citas Pendientes.
+- **Atendida** (Completada) y **No asistió**: para citas Pendientes o Confirmadas.
+- Una cita Cancelada, Completada o No asistió ya no muestra estas opciones.
+- Si la API rechaza el cambio, se muestra su mensaje y la cita conserva su estado.
+- Al regresar a Agenda, la lista y el avance del día se recargan.
+
 ## Criterios de aceptación
 
 - [x] Al iniciar sesión como médico, la primera pantalla es Agenda.
@@ -68,6 +78,8 @@ El médico ve en una sola pantalla todas sus citas de hoy, ordenadas por hora, y
 - [x] Si el servicio falla, se muestra el error y "Reintentar" vuelve a consultar.
 - [x] Deslizar hacia abajo recarga la lista.
 - [x] Tocar una cita abre CitaDetalle con el `citaId` correcto.
+- [ ] En una cita Confirmada, "Atendida" la cambia a Completada y al regresar la agenda refleja el cambio.
+- [ ] El cambio de estado aparece en la agenda de ECE-FIAD Web.
 
 ## Tasks
 
@@ -79,3 +91,6 @@ El médico ve en una sola pantalla todas sus citas de hoy, ordenadas por hora, y
 - [x] Crear la pantalla `AgendaScreen` con sus cuatro estados.
 - [x] Conectar el toque de una tarjeta con la navegación a CitaDetalle.
 - [x] Probar los criterios de aceptación.
+- [x] Pedir a la API solo las citas de hoy (`desde` y `hasta`); la API ya filtra por el médico del token.
+- [x] Agregar `citasService.cambiarEstado` y las acciones de resultado en CitaDetalle.
+- [x] Mostrar el siguiente paciente con cuenta regresiva y el avance del día.

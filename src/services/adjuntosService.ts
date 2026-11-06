@@ -56,7 +56,13 @@ export async function guardar(idEvolucion: number, urisTemporales: string[]): Pr
 export function listarPorEvoluciones(idsEvolucion: number[]): Record<number, Adjunto[]> {
   const ids = new Set(idsEvolucion);
   const agrupados: Record<number, Adjunto[]> = {};
-  for (const adjunto of leerIndice()) {
+  let adjuntos: Adjunto[] = [];
+  try {
+    adjuntos = leerIndice();
+  } catch {
+    // Si no se puede leer la carpeta de fotos, el historial se muestra sin ellas
+  }
+  for (const adjunto of adjuntos) {
     if (!ids.has(adjunto.idEvolucion)) continue;
     (agrupados[adjunto.idEvolucion] ??= []).push(adjunto);
   }

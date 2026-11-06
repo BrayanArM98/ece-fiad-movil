@@ -35,7 +35,7 @@ export function useMisCitasViewModel() {
     if (!idPaciente) return;
     try {
       const [respuestaCitas, respuestaDoctores, estadoPermiso] = await Promise.all([
-        obtenerTodas(),
+        obtenerTodas({ desde: new Date() }),
         obtenerDoctores(),
         consultarPermiso(),
       ]);

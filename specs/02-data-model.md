@@ -102,17 +102,20 @@ HistorialPaciente {            // GET /api/historial/paciente/{idPaciente}
 
 ## Entidades propias de la app móvil
 
-Estas no existen todavía en la API. Se guardan en el teléfono hasta que la API las soporte.
-
 ```ts
-Sesion {
+Sesion {                       // se arma con la respuesta de POST /api/Auth/login
   nombre: string
-  rol: 'medico' | 'paciente'
+  correo: string
+  rol: 'medico' | 'paciente'   // la API envía 'Medico' o 'Paciente'
   idDoctor?: number            // cuando rol = medico
   idPaciente?: number          // cuando rol = paciente
+  token: string                // JWT de la API; vacío en el modo demostración
+  expiraUtc: string            // vencimiento del token (8 horas)
   biometriaActiva: boolean
 }
 ```
+
+Las siguientes no existen en la API y se guardan en el teléfono.
 
 ```ts
 Adjunto {
@@ -133,10 +136,13 @@ RecordatorioProgramado {
 ```
 
 ```ts
-Clinica {                      // configurada en src/config/clinica.ts
+Clinica {                      // ECE-FIAD en src/config/clinica.ts; las demás de OpenStreetMap
+  id: string
   nombre: string
-  direccion: string
-  telefono: string
+  tipo: 'propia' | 'hospital' | 'clinica'
+  direccion?: string
+  telefono?: string
+  urgencias?: boolean
   coordenadas: { latitude: number, longitude: number }
 }
 ```
@@ -145,15 +151,14 @@ Clinica {                      // configurada en src/config/clinica.ts
 
 | Dato | Dónde | Motivo |
 |------|-------|--------|
-| Entidades clínicas | API REST (datos de ejemplo mientras tanto) | Fuente única de la clínica |
-| Sesion | Almacenamiento seguro del teléfono, solo con biometría activa | Contiene datos de acceso |
+| Entidades clínicas | API REST (datos de ejemplo en el modo demostración) | Fuente única de la clínica |
+| Sesion | En memoria; en el almacenamiento seguro solo con biometría activa | Contiene el token de acceso |
 | Adjunto | Archivos locales del teléfono | La API aún no recibe imágenes |
 | RecordatorioProgramado | Archivo JSON en el teléfono | Evitar programar dos avisos para la misma cita |
-| Clinica | Configuración de la app | La API no guarda datos de la clínica |
+| Clinica | ECE-FIAD en la configuración; hospitales cercanos en OpenStreetMap | La API no guarda datos de clínicas |
 
 ## Pendientes con la API
 
-- No existe autenticación ni roles: `Sesion` se simula hasta que la API tenga inicio de sesión.
 - No existe un endpoint para subir imágenes: los `Adjunto` quedan solo en el teléfono.
-- No existe un filtro de citas por doctor y fecha: la agenda filtra en el teléfono la lista completa de citas.
-- No existen datos de la clínica (dirección, teléfono, coordenadas): se configuran en la app.
+- No existen datos de clínicas (dirección, teléfono, coordenadas): la clínica ECE-FIAD se configura en la app y los hospitales cercanos vienen de OpenStreetMap.
+- Resuelto: la API ya tiene inicio de sesión con roles (`POST /api/Auth/login`) y filtra las citas por el médico o paciente del token.

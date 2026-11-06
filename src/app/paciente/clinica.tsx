@@ -1,141 +1,312 @@
-import { CircleAlert, Hospital, MapPin, Navigation, Phone } from 'lucide-react-native';
+import { CircleAlert, Hospital, LocateFixed, MapPin, Navigation, Phone, Siren, Stethoscope } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Boton } from '@/components/Boton';
+import { Presionable } from '@/components/ui/Presionable';
 import { Texto } from '@/components/ui/Texto';
+import type { TipoClinica } from '@/models/Clinica';
 import { colores } from '@/theme/colores';
-import { ALTO_BARRA_PESTANAS, radios, sombras } from '@/theme/tema';
-import { useClinicaViewModel, type EstadoClinica } from '@/viewmodels/useClinicaViewModel';
+import { ALTO_BARRA_PESTANAS, fuentes, radios, sombras } from '@/theme/tema';
+import {
+  useClinicaViewModel,
+  type ClinicaConDistancia,
+  type EstadoClinica,
+  type FiltroClinicas,
+} from '@/viewmodels/useClinicaViewModel';
 
-const ACERCAMIENTO = { latitudeDelta: 0.01, longitudeDelta: 0.01 };
+const ACERCAMIENTO = { latitudeDelta: 0.012, longitudeDelta: 0.012 };
+const SEPARACION = 12;
+const ALTO_TARJETA = 196;
+
+const FILTROS: { valor: FiltroClinicas; titulo: string }[] = [
+  { valor: 'todas', titulo: 'Todas' },
+  { valor: 'hospital', titulo: 'Hospitales' },
+  { valor: 'clinica', titulo: 'Clínicas' },
+];
+
+const COLOR_TIPO: Record<TipoClinica, string> = {
+  propia: colores.marea,
+  hospital: colores.coral,
+  clinica: colores.verde,
+};
 
 /**
  * Pestaña Clínica (specs/features/F07-ubicar-clinica.md).
- * Mapa a pantalla completa con una tarjeta flotante sobre la barra de pestañas.
+ * Mapa con la clínica ECE-FIAD y los hospitales y clínicas reales cercanos (OpenStreetMap).
+ * Debajo, un carrusel de tarjetas: al deslizarlo el mapa se centra en cada lugar.
  * Estados: buscando ubicación, con ubicación, sin permiso y sin señal.
  */
 export default function ClinicaScreen() {
   const vm = useClinicaViewModel();
   const { top, bottom } = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const mapa = useRef<MapView>(null);
+  const carrusel = useRef<FlatList<ClinicaConDistancia>>(null);
   const [mapaListo, setMapaListo] = useState(false);
-  const [altoPanel, setAltoPanel] = useState(260);
-  const baseDelPanel = ALTO_BARRA_PESTANAS + bottom;
+  const [encuadrado, setEncuadrado] = useState(false);
 
-  // Con la posición del paciente, el mapa se ajusta para que se vean ambos puntos sin quedar bajo la tarjeta
+  const anchoTarjeta = width - 48;
+  const baseDelPanel = ALTO_BARRA_PESTANAS + bottom;
+  const altoPanel = ALTO_TARJETA + 56;
+
+  // Al llegar las clínicas, el mapa encuadra al paciente (o la clínica) y los lugares más cercanos
   useEffect(() => {
-    if (mapaListo && vm.posicion) {
-      mapa.current?.fitToCoordinates([vm.posicion, vm.clinica.coordenadas], {
-        edgePadding: { top: top + 80, right: 60, bottom: baseDelPanel + altoPanel + 20, left: 60 },
-        animated: true,
-      });
+    if (!mapaListo || vm.buscandoClinicas || encuadrado) return;
+    const puntos = vm.clinicas.slice(0, 4).map((c) => c.coordenadas);
+    if (vm.posicion) puntos.push(vm.posicion);
+    mapa.current?.fitToCoordinates(puntos, {
+      edgePadding: { top: top + 90, right: 50, bottom: baseDelPanel + altoPanel + 20, left: 50 },
+      animated: true,
+    });
+    setEncuadrado(true);
+  }, [mapaListo, vm.buscandoClinicas, vm.clinicas, vm.posicion, encuadrado, top, baseDelPanel, altoPanel]);
+
+  function enfocar(clinica: ClinicaConDistancia) {
+    mapa.current?.animateToRegion({ ...clinica.coordenadas, ...ACERCAMIENTO }, 450);
+  }
+
+  function alTocarMarcador(clinica: ClinicaConDistancia) {
+    vm.seleccionar(clinica.id);
+    const indice = vm.clinicas.findIndex((c) => c.id === clinica.id);
+    if (indice >= 0) carrusel.current?.scrollToIndex({ index: indice, animated: true });
+    enfocar(clinica);
+  }
+
+  function alDeslizar(desplazamiento: number) {
+    const indice = Math.round(desplazamiento / (anchoTarjeta + SEPARACION));
+    const clinica = vm.clinicas[Math.min(Math.max(indice, 0), vm.clinicas.length - 1)];
+    if (clinica && clinica.id !== vm.seleccionada.id) {
+      vm.seleccionar(clinica.id);
+      enfocar(clinica);
     }
-  }, [mapaListo, vm.posicion, vm.clinica.coordenadas, top, baseDelPanel, altoPanel]);
+  }
 
   return (
     <View style={styles.pantalla}>
       <MapView
         ref={mapa}
         style={StyleSheet.absoluteFill}
-        initialRegion={{ ...vm.clinica.coordenadas, ...ACERCAMIENTO }}
+        initialRegion={{ ...vm.seleccionada.coordenadas, latitudeDelta: 0.06, longitudeDelta: 0.06 }}
         showsUserLocation={vm.estado === 'conUbicacion'}
+        showsMyLocationButton={false}
+        toolbarEnabled={false}
         onMapReady={() => setMapaListo(true)}
-        mapPadding={{ top: top + 56, right: 0, bottom: baseDelPanel + altoPanel, left: 0 }}
+        mapPadding={{ top: top + 70, right: 0, bottom: baseDelPanel + altoPanel, left: 0 }}
       >
-        <Marker coordinate={vm.clinica.coordenadas} title={vm.clinica.nombre} description={vm.clinica.direccion}>
-          <View style={styles.pin}>
-            {/* Solo vistas, sin SVG: en Android los marcadores con SVG pueden quedar en blanco */}
-            <View style={styles.cabezaPin}>
-              <View style={styles.cruzVertical} />
-              <View style={styles.cruzHorizontal} />
-            </View>
-            <View style={styles.puntaPin} />
-          </View>
-        </Marker>
+        {vm.clinicas.map((clinica) => (
+          <Marker
+            key={clinica.id}
+            coordinate={clinica.coordenadas}
+            title={clinica.nombre}
+            description={clinica.distanciaTexto ? `A ${clinica.distanciaTexto}` : clinica.direccion}
+            onPress={() => alTocarMarcador(clinica)}
+            zIndex={clinica.id === vm.seleccionada.id ? 10 : clinica.tipo === 'propia' ? 5 : 1}
+          >
+            <Pin tipo={clinica.tipo} activo={clinica.id === vm.seleccionada.id} />
+          </Marker>
+        ))}
       </MapView>
 
-      <View style={[styles.chipSuperior, { top: top + 12 }, sombras.media]}>
-        <MapPin size={15} color={colores.marea} />
-        <Texto variante="etiqueta" color={colores.tinta}>
-          Cómo llegar a tu clínica
-        </Texto>
+      <View style={[styles.encabezado, { top: top + 10 }]} pointerEvents="box-none">
+        <View style={[styles.chipTitulo, sombras.media]}>
+          <MapPin size={16} color={colores.marea} />
+          <Texto variante="cuerpoFuerte">Clínicas cerca de ti</Texto>
+        </View>
+        <EstadoUbicacion estado={vm.estado} buscandoClinicas={vm.buscandoClinicas} />
       </View>
 
-      <Animated.View
-        entering={FadeInUp.duration(500)}
-        onLayout={(e) => setAltoPanel(e.nativeEvent.layout.height)}
-        style={[styles.panel, { bottom: baseDelPanel + 8 }, sombras.alta]}
-      >
-        <View style={styles.cabecera}>
-          <View style={styles.iconoClinica}>
-            <Hospital size={22} color={colores.marea} />
-          </View>
-          <View style={styles.flex}>
-            <Texto variante="titulo2">{vm.clinica.nombre}</Texto>
-            <EstadoUbicacion estado={vm.estado} distancia={vm.distancia} />
-          </View>
+      <Animated.View entering={FadeInUp.duration(500)} style={[styles.panel, { bottom: baseDelPanel + 6 }]}>
+        <View style={styles.filtros}>
+          {FILTROS.map(({ valor, titulo }) => (
+            <Presionable
+              key={valor}
+              onPress={() => {
+                vm.setFiltro(valor);
+                vm.seleccionar('ece-fiad');
+                carrusel.current?.scrollToOffset({ offset: 0, animated: true });
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: vm.filtro === valor }}
+              style={[styles.filtro, vm.filtro === valor && styles.filtroActivo, sombras.baja]}
+            >
+              <Texto variante="etiqueta" color={vm.filtro === valor ? colores.blanco : colores.tinta}>
+                {titulo}
+              </Texto>
+            </Presionable>
+          ))}
+          <View style={styles.flex} />
+          <Text style={styles.atribucion}>© OpenStreetMap</Text>
         </View>
 
-        <View style={styles.datos}>
-          <Fila icono={MapPin} texto={vm.clinica.direccion} />
-          <Fila icono={Phone} texto={vm.clinica.telefono} />
-        </View>
-
-        <View style={styles.botones}>
-          <View style={styles.flex}>
-            <Boton titulo="Cómo llegar" icono={Navigation} onPress={vm.comoLlegar} ancho />
-          </View>
-          <View style={styles.flex}>
-            <Boton titulo="Llamar" icono={Phone} variante="suave" onPress={vm.llamarClinica} ancho />
-          </View>
-        </View>
+        <FlatList
+          ref={carrusel}
+          data={vm.clinicas}
+          keyExtractor={(c) => c.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={anchoTarjeta + SEPARACION}
+          decelerationRate="fast"
+          contentContainerStyle={styles.carrusel}
+          ItemSeparatorComponent={() => <View style={{ width: SEPARACION }} />}
+          getItemLayout={(_d, index) => ({
+            length: anchoTarjeta + SEPARACION,
+            offset: (anchoTarjeta + SEPARACION) * index,
+            index,
+          })}
+          onMomentumScrollEnd={(e) => alDeslizar(e.nativeEvent.contentOffset.x)}
+          renderItem={({ item }) => (
+            <TarjetaClinica
+              clinica={item}
+              ancho={anchoTarjeta}
+              activa={item.id === vm.seleccionada.id}
+              onComoLlegar={() => vm.comoLlegar(item)}
+              onLlamar={() => vm.llamar(item)}
+            />
+          )}
+          ListFooterComponent={
+            vm.buscandoClinicas ? (
+              <View style={[styles.cargandoTarjeta, { width: anchoTarjeta * 0.6, marginLeft: SEPARACION }]}>
+                <ActivityIndicator color={colores.marea} />
+                <Texto variante="secundario" color={colores.pizarra} centrado>
+                  Buscando hospitales y clínicas cercanas…
+                </Texto>
+              </View>
+            ) : vm.totalCercanas === 0 ? (
+              <View style={[styles.cargandoTarjeta, { width: anchoTarjeta * 0.6, marginLeft: SEPARACION }]}>
+                <Texto variante="secundario" color={colores.pizarra} centrado>
+                  No encontramos otros hospitales en 8 km.
+                </Texto>
+              </View>
+            ) : undefined
+          }
+        />
       </Animated.View>
     </View>
   );
 }
 
-function Fila({ icono: Icono, texto }: { icono: typeof MapPin; texto: string }) {
+/** Marcador sin SVG (en Android los marcadores con SVG pueden quedar en blanco). */
+function Pin({ tipo, activo }: { tipo: TipoClinica; activo: boolean }) {
+  const color = COLOR_TIPO[tipo];
+  const tamano = tipo === 'propia' || activo ? 40 : 30;
   return (
-    <View style={styles.fila}>
-      <Icono size={16} color={colores.pizarra} />
-      <Texto variante="secundario" color={colores.tinta} style={styles.flex}>
-        {texto}
-      </Texto>
+    <View style={styles.pin}>
+      <View
+        style={[
+          styles.cabezaPin,
+          { width: tamano, height: tamano, borderRadius: tamano / 2, backgroundColor: color },
+          activo && styles.pinActivo,
+        ]}
+      >
+        {tipo === 'hospital' ? (
+          <Text style={[styles.letraPin, { fontSize: tamano * 0.45 }]}>H</Text>
+        ) : (
+          <>
+            <View style={[styles.cruzV, { height: tamano * 0.45, width: tamano * 0.15 }]} />
+            <View style={[styles.cruzH, { width: tamano * 0.45, height: tamano * 0.15 }]} />
+          </>
+        )}
+      </View>
+      <View style={styles.puntaPin} />
     </View>
   );
 }
 
-function EstadoUbicacion({ estado, distancia }: { estado: EstadoClinica; distancia: string | null }) {
+interface TarjetaClinicaProps {
+  clinica: ClinicaConDistancia;
+  ancho: number;
+  activa: boolean;
+  onComoLlegar: () => void;
+  onLlamar: () => void;
+}
+
+function TarjetaClinica({ clinica, ancho, activa, onComoLlegar, onLlamar }: TarjetaClinicaProps) {
+  const Icono = clinica.tipo === 'hospital' ? Hospital : Stethoscope;
+  const color = COLOR_TIPO[clinica.tipo];
+  const etiquetaTipo = clinica.tipo === 'propia' ? 'Tu clínica' : clinica.tipo === 'hospital' ? 'Hospital' : 'Clínica';
+
+  return (
+    <View style={[styles.tarjeta, { width: ancho }, activa ? sombras.alta : sombras.media, activa && styles.tarjetaActiva]}>
+      <View style={styles.cabeceraTarjeta}>
+        <View style={[styles.iconoTarjeta, { backgroundColor: `${color}1A` }]}>
+          <Icono size={22} color={color} />
+        </View>
+        <View style={styles.flex}>
+          <View style={styles.etiquetas}>
+            <View style={[styles.insignia, { backgroundColor: `${color}1A` }]}>
+              <Texto variante="etiqueta" color={color}>
+                {etiquetaTipo}
+              </Texto>
+            </View>
+            {clinica.urgencias ? (
+              <View style={[styles.insignia, { backgroundColor: colores.coralSuave }]}>
+                <Siren size={12} color={colores.coral} />
+                <Texto variante="etiqueta" color={colores.coral}>
+                  Urgencias
+                </Texto>
+              </View>
+            ) : null}
+          </View>
+          <Texto variante="titulo3" numberOfLines={1}>
+            {clinica.nombre}
+          </Texto>
+        </View>
+      </View>
+
+      <View style={styles.filaDato}>
+        <Navigation size={14} color={colores.marea} />
+        <Texto variante="etiqueta" color={colores.mareaProfunda}>
+          {clinica.distanciaTexto ? `A ${clinica.distanciaTexto} de ti` : 'Activa tu ubicación para ver la distancia'}
+        </Texto>
+      </View>
+      <View style={styles.filaDato}>
+        <MapPin size={14} color={colores.pizarra} />
+        <Texto variante="secundario" color={colores.pizarra} numberOfLines={1} style={styles.flex}>
+          {clinica.direccion ?? 'Dirección no registrada en el mapa'}
+        </Texto>
+      </View>
+
+      <View style={styles.botones}>
+        <View style={styles.flex}>
+          <Boton titulo="Cómo llegar" icono={Navigation} tamano="compacto" onPress={onComoLlegar} ancho />
+        </View>
+        {clinica.telefono ? (
+          <View style={styles.flex}>
+            <Boton titulo="Llamar" icono={Phone} variante="suave" tamano="compacto" onPress={onLlamar} ancho />
+          </View>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+function EstadoUbicacion({ estado, buscandoClinicas }: { estado: EstadoClinica; buscandoClinicas: boolean }) {
   if (estado === 'buscando') {
     return (
-      <View style={styles.fila}>
+      <View style={[styles.aviso, sombras.baja]}>
         <ActivityIndicator size="small" color={colores.marea} />
-        <Texto variante="secundario" color={colores.pizarra}>
-          Buscando tu ubicación
-        </Texto>
+        <Texto variante="etiqueta">Buscando tu ubicación</Texto>
       </View>
     );
   }
-  if (estado === 'conUbicacion' && distancia) {
-    return (
-      <View style={styles.distancia}>
-        <Navigation size={13} color={colores.marea} />
-        <Texto variante="etiqueta" color={colores.mareaProfunda}>
-          A {distancia} de ti
-        </Texto>
+  if (estado === 'conUbicacion') {
+    return buscandoClinicas ? null : (
+      <View style={[styles.aviso, sombras.baja]}>
+        <LocateFixed size={14} color={colores.marea} />
+        <Texto variante="etiqueta">Ordenadas por cercanía</Texto>
       </View>
     );
   }
   const mensaje =
     estado === 'sinSenal' ? 'No se pudo obtener tu ubicación' : 'Activa tu ubicación para ver qué tan lejos estás';
   return (
-    <View style={styles.fila}>
-      <CircleAlert size={15} color={colores.ambar} />
-      <Texto variante="secundario" color={colores.pizarra} style={styles.flex}>
+    <View style={[styles.aviso, sombras.baja]}>
+      <CircleAlert size={14} color={colores.ambar} />
+      <Texto variante="etiqueta" style={styles.flexTexto}>
         {mensaje}
       </Texto>
     </View>
@@ -145,71 +316,93 @@ function EstadoUbicacion({ estado, distancia }: { estado: EstadoClinica; distanc
 const styles = StyleSheet.create({
   pantalla: { flex: 1, backgroundColor: colores.mareaSuave },
   flex: { flex: 1 },
-  pin: { alignItems: 'center' },
-  cabezaPin: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colores.marea,
-    borderWidth: 3,
-    borderColor: colores.blanco,
+  flexTexto: { flexShrink: 1 },
+  encabezado: { position: 'absolute', left: 16, right: 16, alignItems: 'center', gap: 8 },
+  chipTitulo: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: radios.total,
+    backgroundColor: colores.blanco,
   },
-  cruzVertical: { position: 'absolute', width: 6, height: 18, borderRadius: 3, backgroundColor: colores.blanco },
-  cruzHorizontal: { position: 'absolute', width: 18, height: 6, borderRadius: 3, backgroundColor: colores.blanco },
+  aviso: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    maxWidth: '100%',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: radios.total,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+  },
+  pin: { alignItems: 'center' },
+  cabezaPin: { borderWidth: 3, borderColor: colores.blanco, alignItems: 'center', justifyContent: 'center' },
+  pinActivo: { borderWidth: 4 },
+  letraPin: { color: colores.blanco, fontFamily: fuentes.display },
+  cruzV: { position: 'absolute', borderRadius: 2, backgroundColor: colores.blanco },
+  cruzH: { position: 'absolute', borderRadius: 2, backgroundColor: colores.blanco },
   puntaPin: {
     width: 0,
     height: 0,
     marginTop: -2,
-    borderLeftWidth: 7,
-    borderRightWidth: 7,
-    borderTopWidth: 10,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 9,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderTopColor: colores.blanco,
   },
-  chipSuperior: {
-    position: 'absolute',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  panel: { position: 'absolute', left: 0, right: 0, gap: 10 },
+  filtros: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 24 },
+  filtro: {
     paddingHorizontal: 14,
-    paddingVertical: 9,
+    paddingVertical: 8,
     borderRadius: radios.total,
     backgroundColor: colores.blanco,
   },
-  panel: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    padding: 18,
-    gap: 14,
+  filtroActivo: { backgroundColor: colores.marea },
+  atribucion: {
+    fontSize: 10,
+    color: colores.pizarra,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  carrusel: { paddingHorizontal: 24, paddingBottom: 4 },
+  tarjeta: {
+    height: ALTO_TARJETA,
+    padding: 16,
+    gap: 10,
     borderRadius: radios.xl,
     backgroundColor: colores.blanco,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
-  cabecera: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  iconoClinica: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: colores.mareaSuave,
+  tarjetaActiva: { borderColor: colores.mareaClara },
+  cabeceraTarjeta: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  iconoTarjeta: { width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  etiquetas: { flexDirection: 'row', gap: 6, marginBottom: 3 },
+  insignia: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: radios.total,
+  },
+  filaDato: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  botones: { flexDirection: 'row', gap: 10, marginTop: 'auto' },
+  cargandoTarjeta: {
+    height: ALTO_TARJETA,
+    padding: 16,
+    gap: 10,
+    borderRadius: radios.xl,
+    backgroundColor: 'rgba(255,255,255,0.92)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  datos: { gap: 8 },
-  fila: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
-  distancia: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: radios.total,
-    backgroundColor: colores.mareaSuave,
-  },
-  botones: { flexDirection: 'row', gap: 10 },
 });

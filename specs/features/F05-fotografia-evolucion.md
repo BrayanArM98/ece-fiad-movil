@@ -18,8 +18,8 @@ Médico.
 
 ## Flujo principal
 
-1. En NuevaEvolucion, el médico presiona "Agregar foto".
-2. El sistema ofrece "Tomar foto" o "Elegir de la galería".
+1. En NuevaEvolucion, la sección Fotografías muestra dos botones: "Tomar foto" y "Galería".
+2. El médico elige el origen de la imagen.
 3. La primera vez, el sistema solicita el permiso correspondiente del teléfono.
 4. El médico toma o elige la imagen.
 5. El sistema muestra una miniatura de la foto en el formulario, con un botón para quitarla.
@@ -28,7 +28,7 @@ Médico.
 
 ## Validaciones
 
-- Máximo 3 fotografías por evolución; al llegar a 3, "Agregar foto" se deshabilita.
+- Máximo 3 fotografías por evolución; al llegar a 3, "Tomar foto" y "Galería" se deshabilitan.
 - Las imágenes se comprimen antes de guardarse para no ocupar demasiado espacio.
 - Las fotos solo se asocian si la evolución se guardó con éxito.
 
@@ -45,10 +45,10 @@ La evolución queda acompañada de hasta tres fotografías que el médico puede 
 
 ## Criterios de aceptación
 
-- [x] "Agregar foto" ofrece cámara y galería.
+- [x] La sección Fotografías ofrece cámara ("Tomar foto") y galería.
 - [x] La foto tomada aparece como miniatura en el formulario.
 - [x] La miniatura se puede quitar antes de guardar.
-- [x] Con 3 fotos, "Agregar foto" se deshabilita.
+- [x] Con 3 fotos, los botones para agregar se deshabilitan.
 - [ ] Con el permiso de cámara negado, se muestra el mensaje y la galería sigue funcionando.
 - [x] Después de guardar, la evolución muestra sus fotos en el historial.
 - [x] Tocar una foto del historial la abre en pantalla completa.

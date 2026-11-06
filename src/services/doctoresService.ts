@@ -18,3 +18,14 @@ export async function obtenerTodos(): Promise<Respuesta<Doctor[]>> {
   await esperar(300);
   return { exitoso: true, mensaje: 'Operación exitosa', datos: DOCTORES_EJEMPLO };
 }
+
+/** Datos del médico de la sesión para Perfil: GET /api/Doctores/{id}. */
+export async function obtenerPorId(id: number): Promise<Respuesta<Doctor>> {
+  comprobarRed();
+  if (usarApi) return pedir<Doctor>(`/api/Doctores/${id}`);
+
+  await esperar(300);
+  const doctor = DOCTORES_EJEMPLO.find((d) => d.id === id);
+  if (!doctor) return { exitoso: false, mensaje: 'Doctor no encontrado', datos: null };
+  return { exitoso: true, mensaje: 'Operación exitosa', datos: doctor };
+}

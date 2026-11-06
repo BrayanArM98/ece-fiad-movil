@@ -70,7 +70,12 @@ El usuario entra a la zona de su rol, y en los siguientes accesos solo necesita 
 
 ## Decisiones
 
-- La API todavía no tiene inicio de sesión. Mientras tanto, las credenciales se validan contra cuentas de ejemplo definidas en la app (una de médico y una de paciente). Al existir el endpoint, solo cambia el servicio de autenticación.
+- Las credenciales se validan con `POST /api/Auth/login`, que devuelve un token JWT válido por 8 horas. El token viaja en el encabezado `Authorization` de cada petición (ver `03-api.md`).
+- Solo entran cuentas de médico y de paciente. Administrador y recepción reciben "Esta app es para médicos y pacientes. El personal administrativo usa ECE-FIAD Web."
+- La sesión guardada para la biometría incluye el token. Si al reconocer la huella el token ya venció, se borra la sesión y se pide la contraseña con el aviso "Tu sesión expiró. Entra con tu correo y contraseña."
+- Si la API responde 401 a mitad del uso (token vencido o cuenta desactivada), la app cierra la sesión y regresa a Login.
+- La API publicada en Azure se duerme sin uso; si el inicio de sesión tarda más de 6 segundos, Login avisa que el servidor está despertando.
+- Sin API configurada, las credenciales se validan contra las cuentas de ejemplo de la app (modo demostración).
 - Biometría con `expo-local-authentication`; sesión con `expo-secure-store`.
 - La sesión solo se guarda si la biometría está activa. Sin biometría, guardar la sesión permitiría que cualquiera que abra la app entre sin identificarse, que es justo lo que esta feature evita.
 - La alternativa a la huella es la contraseña de la cuenta, no el PIN del teléfono: el PIN suelen conocerlo otras personas.
@@ -80,6 +85,8 @@ El usuario entra a la zona de su rol, y en los siguientes accesos solo necesita 
 
 - [x] Crear el tipo `Sesion` en `src/models`.
 - [x] Crear `authService` con las cuentas de ejemplo.
+- [x] Conectar `authService` con `POST /api/Auth/login` y guardar el token en la sesión.
+- [x] Cerrar la sesión cuando la API responde 401 o el token guardado ya venció.
 - [x] Crear `sesionStorage` sobre almacenamiento seguro (guardar, leer, borrar).
 - [x] Crear `biometriaService` (disponibilidad y autenticación).
 - [x] Crear el ViewModel `useLoginViewModel`.

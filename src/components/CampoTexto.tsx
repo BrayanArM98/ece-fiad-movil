@@ -1,6 +1,9 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, TextInput, View } from 'react-native';
 
+import { Texto } from '@/components/ui/Texto';
 import { colores } from '@/theme/colores';
+import { fuentes, radios } from '@/theme/tema';
 
 interface CampoTextoProps {
   etiqueta: string;
@@ -17,50 +20,59 @@ interface CampoTextoProps {
  * maxLength impide escribir más del límite (F04, validaciones).
  */
 export function CampoTexto({ etiqueta, valor, onCambiar, maximo, obligatorio, placeholder, error }: CampoTextoProps) {
+  const [enfocado, setEnfocado] = useState(false);
+  const cercaDelLimite = valor.length >= maximo * 0.9;
+
   return (
     <View style={styles.contenedor}>
       <View style={styles.encabezado}>
-        <Text style={styles.etiqueta}>
+        <Texto variante="etiqueta" color={colores.pizarra}>
           {etiqueta}
-          {obligatorio ? <Text style={styles.obligatorio}> *</Text> : null}
-        </Text>
-        <Text style={styles.contador}>
+          {obligatorio ? <Texto variante="etiqueta" color={colores.coral}> *</Texto> : null}
+        </Texto>
+        <Texto variante="etiqueta" color={cercaDelLimite ? colores.ambar : colores.niebla}>
           {valor.length}/{maximo}
-        </Text>
+        </Texto>
       </View>
       <TextInput
-        style={[styles.campo, error && styles.campoError]}
+        style={[styles.campo, enfocado && styles.enfocado, !!error && styles.campoError]}
         value={valor}
         onChangeText={onCambiar}
         maxLength={maximo}
         multiline
         placeholder={placeholder}
-        placeholderTextColor={colores.deshabilitado}
+        placeholderTextColor={colores.niebla}
+        selectionColor={colores.marea}
         textAlignVertical="top"
         accessibilityLabel={etiqueta}
+        onFocus={() => setEnfocado(true)}
+        onBlur={() => setEnfocado(false)}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? (
+        <Texto variante="secundario" color={colores.coral}>
+          {error}
+        </Texto>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  contenedor: { gap: 6 },
+  contenedor: { gap: 8 },
   encabezado: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-  etiqueta: { fontSize: 14, fontWeight: '600', color: colores.texto },
-  obligatorio: { color: colores.error },
-  contador: { fontSize: 12, color: colores.textoSecundario },
   campo: {
-    minHeight: 96,
-    backgroundColor: colores.superficie,
-    borderWidth: 1,
-    borderColor: colores.borde,
-    borderRadius: 10,
-    padding: 12,
+    minHeight: 104,
+    backgroundColor: colores.papel,
+    borderWidth: 1.5,
+    borderColor: colores.linea,
+    borderRadius: radios.m,
+    padding: 14,
+    fontFamily: fuentes.texto,
     fontSize: 16,
     lineHeight: 22,
-    color: colores.texto,
-  },
-  campoError: { borderColor: colores.error },
-  error: { fontSize: 13, color: colores.error },
+    color: colores.tinta,
+    outlineStyle: 'none',
+  } as object,
+  enfocado: { borderColor: colores.marea, backgroundColor: colores.blanco },
+  campoError: { borderColor: colores.coral },
 });

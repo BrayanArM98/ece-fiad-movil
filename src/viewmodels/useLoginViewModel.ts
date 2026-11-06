@@ -2,13 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 import { useSesion } from '@/context/SesionContext';
-import type { Sesion } from '@/models/Sesion';
+import { sesionExpirada, type Sesion } from '@/models/Sesion';
 import { iniciarSesion } from '@/services/authService';
 import { autenticar, estaDisponible } from '@/services/biometriaService';
+import { despertarServidor } from '@/services/http';
 import { borrarSesion, guardarSesion, leerSesion } from '@/services/sesionStorage';
 
 const FORMATO_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const MAX_INTENTOS_BIOMETRIA = 3;
+const AVISO_EXPIRADA = 'Tu sesión expiró. Entra con tu correo y contraseña.';
+/** Si el servidor tarda más que esto, se avisa que está despertando (plan gratuito de Azure). */
+const MS_SERVIDOR_LENTO = 6_000;
 
 function preguntarBiometria(): Promise<boolean> {
   return new Promise((resolver) => {
@@ -40,6 +44,7 @@ export function useLoginViewModel(alIniciarSesion: () => void) {
   const [sesionGuardada, setSesionGuardada] = useState<Sesion | null>(null);
   const [verificando, setVerificando] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
+  const [lento, setLento] = useState(false);
   const intentosFallidos = useRef(0);
 
   // F01: "Entrar" deshabilitado mientras falte el correo válido o la contraseña
@@ -52,6 +57,13 @@ export function useLoginViewModel(alIniciarSesion: () => void) {
     setVerificando(false);
 
     if (resultado === 'ok') {
+      // El token de la API dura 8 horas; si ya venció hay que entrar con contraseña
+      if (sesionExpirada(sesion)) {
+        await borrarSesion();
+        setSesionGuardada(null);
+        setAviso(AVISO_EXPIRADA);
+        return;
+      }
       abrirSesion(sesion);
       alIniciarSesion();
       return;
@@ -72,6 +84,7 @@ export function useLoginViewModel(alIniciarSesion: () => void) {
 
   // Accesos siguientes: si hay una sesión guardada con biometría, se pide al abrir la app
   useEffect(() => {
+    despertarServidor();
     let activo = true;
 
     (async () => {
@@ -81,6 +94,11 @@ export function useLoginViewModel(alIniciarSesion: () => void) {
       // Si el usuario quitó sus huellas del teléfono, vuelve a entrar con contraseña
       if (!(await estaDisponible())) {
         await borrarSesion();
+        return;
+      }
+      if (sesionExpirada(guardada)) {
+        await borrarSesion();
+        if (activo) setAviso(AVISO_EXPIRADA);
         return;
       }
 
@@ -112,7 +130,17 @@ export function useLoginViewModel(alIniciarSesion: () => void) {
     setError(null);
     setAviso(null);
 
-    const respuesta = await iniciarSesion(correo, contrasena);
+    // Si el servidor tarda (está despertando), la pantalla lo avisa
+    const temporizador = setTimeout(() => setLento(true), MS_SERVIDOR_LENTO);
+    let respuesta: Awaited<ReturnType<typeof iniciarSesion>>;
+    try {
+      respuesta = await iniciarSesion(correo, contrasena);
+    } catch (e) {
+      respuesta = { exitoso: false, mensaje: e instanceof Error ? e.message : 'No se pudo conectar con el servidor.', datos: null };
+    } finally {
+      clearTimeout(temporizador);
+      setLento(false);
+    }
 
     if (!respuesta.exitoso || !respuesta.datos) {
       // Los campos se conservan para que el usuario corrija
@@ -154,6 +182,7 @@ export function useLoginViewModel(alIniciarSesion: () => void) {
     contrasena,
     setContrasena,
     cargando,
+    lento,
     error,
     puedeEnviar,
     entrar,

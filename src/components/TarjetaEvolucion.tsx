@@ -1,11 +1,16 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ChevronDown, Images, Pill, Stethoscope } from 'lucide-react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 
+import { Presionable } from '@/components/ui/Presionable';
+import { Texto } from '@/components/ui/Texto';
 import type { Adjunto } from '@/models/Adjunto';
 import type { Evolucion } from '@/models/Evolucion';
 import { colores } from '@/theme/colores';
-import { formatearFechaCompleta } from '@/utils/fechas';
+import { radios, sombras } from '@/theme/tema';
+import { formatearFechaCompleta, formatearHora } from '@/utils/fechas';
+import { diaCorto, mesCorto } from '@/utils/tiempo';
 
 interface TarjetaEvolucionProps {
   evolucion: Evolucion;
@@ -20,43 +25,65 @@ interface TarjetaEvolucionProps {
  * y sus fotografías (F05).
  */
 export function TarjetaEvolucion({ evolucion, fotos, expandida, onPress, onVerFoto }: TarjetaEvolucionProps) {
+  const fecha = new Date(evolucion.fecha);
+
   return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ expanded: expandida }}
-      style={styles.tarjeta}
-    >
-      <View style={styles.encabezado}>
-        <View style={styles.titulo}>
-          <Text style={styles.fecha}>{formatearFechaCompleta(new Date(evolucion.fecha))}</Text>
-          <Text style={styles.doctor}>
-            Dr(a). {evolucion.nombreDoctor} · {evolucion.nombreEspecialidad}
-          </Text>
-        </View>
-        {fotos.length > 0 ? (
-          <View style={styles.indicadorFotos}>
-            <Ionicons name="image-outline" size={16} color={colores.textoSecundario} />
-            <Text style={styles.textoIndicador}>{fotos.length}</Text>
+    <Animated.View layout={LinearTransition.springify().damping(20)} style={[styles.tarjeta, sombras.baja]}>
+      <Presionable
+        onPress={onPress}
+        escala={0.99}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: expandida }}
+        accessibilityLabel={`Evolución del ${formatearFechaCompleta(fecha)}. ${expandida ? 'Ocultar' : 'Ver'} detalles`}
+        style={styles.toque}
+      >
+        <View style={styles.encabezado}>
+          <View style={styles.calendario}>
+            <Texto variante="mayusculas" color={colores.marea}>
+              {mesCorto(fecha)}
+            </Texto>
+            <Texto variante="titulo2">{fecha.getDate()}</Texto>
           </View>
-        ) : null}
-        <Ionicons name={expandida ? 'chevron-up' : 'chevron-down'} size={20} color={colores.textoSecundario} />
-      </View>
+          <View style={styles.titulo}>
+            <Texto variante="cuerpoFuerte" numberOfLines={1}>
+              Dr(a). {evolucion.nombreDoctor}
+            </Texto>
+            <Texto variante="secundario" color={colores.pizarra} numberOfLines={1}>
+              {evolucion.nombreEspecialidad} · {diaCorto(fecha)} {formatearHora(fecha)} · {fecha.getFullYear()}
+            </Texto>
+          </View>
+          {fotos.length > 0 ? (
+            <View style={styles.indicadorFotos}>
+              <Images size={14} color={colores.mareaProfunda} />
+              <Texto variante="etiqueta" color={colores.mareaProfunda}>
+                {fotos.length}
+              </Texto>
+            </View>
+          ) : null}
+          <View style={expandida ? styles.girado : undefined}>
+            <ChevronDown size={20} color={colores.niebla} />
+          </View>
+        </View>
 
-      <Text style={styles.etiqueta}>Diagnóstico</Text>
-      <Text style={styles.texto}>{evolucion.diagnostico}</Text>
-
-      <Text style={styles.etiqueta}>Tratamiento</Text>
-      <Text style={styles.texto}>{evolucion.tratamiento}</Text>
+        <Bloque icono={<Stethoscope size={15} color={colores.marea} />} titulo="Diagnóstico" texto={evolucion.diagnostico} />
+        <Bloque icono={<Pill size={15} color={colores.marea} />} titulo="Tratamiento" texto={evolucion.tratamiento} recortar={!expandida} />
+      </Presionable>
 
       {expandida ? (
-        <>
-          <Text style={styles.etiqueta}>Notas</Text>
-          <Text style={[styles.texto, !evolucion.notas && styles.vacio]}>{evolucion.notas || 'Sin notas'}</Text>
-
+        <Animated.View entering={FadeIn.duration(250)} style={styles.extra}>
+          <View style={styles.notas}>
+            <Texto variante="mayusculas" color={colores.niebla}>
+              Notas
+            </Texto>
+            <Texto variante="cuerpo" color={evolucion.notas ? colores.tinta : colores.niebla}>
+              {evolucion.notas || 'Sin notas'}
+            </Texto>
+          </View>
           {fotos.length > 0 ? (
-            <>
-              <Text style={styles.etiqueta}>Fotografías</Text>
+            <View style={styles.galeria}>
+              <Texto variante="mayusculas" color={colores.niebla}>
+                Fotografías
+              </Texto>
               <View style={styles.fotos}>
                 {fotos.map((foto, indice) => (
                   <Pressable
@@ -65,35 +92,68 @@ export function TarjetaEvolucion({ evolucion, fotos, expandida, onPress, onVerFo
                     accessibilityRole="imagebutton"
                     accessibilityLabel={`Ver foto ${indice + 1}`}
                   >
-                    <Image source={{ uri: foto.uri }} style={styles.miniatura} contentFit="cover" />
+                    <Image source={{ uri: foto.uri }} style={styles.miniatura} contentFit="cover" transition={200} />
                   </Pressable>
                 ))}
               </View>
-            </>
+            </View>
           ) : null}
-        </>
+        </Animated.View>
       ) : null}
-    </Pressable>
+    </Animated.View>
+  );
+}
+
+function Bloque({ icono, titulo, texto, recortar }: { icono: React.ReactNode; titulo: string; texto: string; recortar?: boolean }) {
+  return (
+    <View style={styles.bloque}>
+      <View style={styles.tituloBloque}>
+        {icono}
+        <Texto variante="etiqueta" color={colores.marea}>
+          {titulo}
+        </Texto>
+      </View>
+      <Texto variante="cuerpo" numberOfLines={recortar ? 2 : undefined}>
+        {texto}
+      </Texto>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   tarjeta: {
-    backgroundColor: colores.superficie,
-    borderWidth: 1,
-    borderColor: colores.borde,
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colores.blanco,
+    borderRadius: radios.l,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colores.linea,
+    overflow: 'hidden',
   },
-  encabezado: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 4 },
+  toque: { padding: 16, gap: 12 },
+  encabezado: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  calendario: {
+    width: 48,
+    height: 52,
+    borderRadius: radios.s,
+    backgroundColor: colores.mareaSuave,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   titulo: { flex: 1, gap: 2 },
-  fecha: { fontSize: 16, fontWeight: '700', color: colores.texto },
-  doctor: { fontSize: 13, color: colores.textoSecundario },
-  indicadorFotos: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  textoIndicador: { fontSize: 13, color: colores.textoSecundario },
-  etiqueta: { fontSize: 12, fontWeight: '700', color: colores.primario, marginTop: 10, textTransform: 'uppercase' },
-  texto: { fontSize: 15, lineHeight: 21, color: colores.texto, marginTop: 2 },
-  vacio: { color: colores.textoSecundario, fontStyle: 'italic' },
-  fotos: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
-  miniatura: { width: 80, height: 80, borderRadius: 8 },
+  indicadorFotos: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radios.total,
+    backgroundColor: colores.mareaSuave,
+  },
+  girado: { transform: [{ rotate: '180deg' }] },
+  bloque: { gap: 4 },
+  tituloBloque: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  extra: { paddingHorizontal: 16, paddingBottom: 16, gap: 14 },
+  notas: { gap: 4, padding: 12, borderRadius: radios.m, backgroundColor: colores.papel },
+  galeria: { gap: 8 },
+  fotos: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  miniatura: { width: 84, height: 84, borderRadius: radios.s },
 });

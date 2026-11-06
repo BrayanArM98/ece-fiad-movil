@@ -6,4 +6,6 @@ export interface Respuesta<T> {
   exitoso: boolean;
   mensaje: string;
   datos: T | null;
+  /** Código HTTP de la respuesta; solo existe cuando la respuesta vino de la API. */
+  codigo?: number;
 }
