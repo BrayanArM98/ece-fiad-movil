@@ -36,6 +36,7 @@
 - [Tecnologías](#tecnologías)
 - [Ejecutar el proyecto](#ejecutar-el-proyecto)
 - [Especificaciones](#especificaciones)
+- [Bitácora de IA y decisiones](#bitácora-de-ia-y-decisiones)
 - [Autor](#autor)
 
 ## Capturas
@@ -137,6 +138,11 @@ Escanea el código QR con Expo Go (Android) o con la cámara (iPhone).
 ## Especificaciones
 
 El proyecto se desarrolla con **Spec-Driven Development**. El problema, el MVP, la navegación, el modelo de datos, la conexión con la API, el diseño y una especificación por feature (F01 a F07) están en [`specs/`](specs/README.md).
+
+## Bitácora de IA y decisiones
+
+- [Bitácora de IA](docs/bitacora-ia.md): qué le pedí a la IA, qué acepté, qué rechacé y en qué se equivocó.
+- [Diario de decisiones](docs/diario-decisiones.md): decisiones de arquitectura y diseño con sus alternativas.
 
 ## Autor
 
