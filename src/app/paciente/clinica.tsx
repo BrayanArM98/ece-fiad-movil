@@ -1,6 +1,7 @@
-import { CircleAlert, Hospital, LocateFixed, MapPin, Navigation, Phone, Siren, Stethoscope } from 'lucide-react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+import { CircleAlert, Hospital, LocateFixed, Map as IconoMapa, MapPin, Navigation, Phone, Siren, Stethoscope } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,6 +18,16 @@ import {
   type EstadoClinica,
   type FiltroClinicas,
 } from '@/viewmodels/useClinicaViewModel';
+
+/**
+ * En Expo Go el mapa funciona sin configuración. En un APK propio, Android necesita una clave de Google Maps
+ * (android.config.googleMaps.apiKey en app.json); sin ella el mapa no se puede mostrar, así que la pantalla
+ * conserva la lista de lugares y "Cómo llegar" abre la app de mapas del teléfono.
+ */
+const MAPA_DISPONIBLE =
+  Platform.OS !== 'android' ||
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient ||
+  !!Constants.expoConfig?.android?.config?.googleMaps?.apiKey;
 
 const ACERCAMIENTO = { latitudeDelta: 0.012, longitudeDelta: 0.012 };
 const SEPARACION = 12;
@@ -87,29 +98,33 @@ export default function ClinicaScreen() {
 
   return (
     <View style={styles.pantalla}>
-      <MapView
-        ref={mapa}
-        style={StyleSheet.absoluteFill}
-        initialRegion={{ ...vm.seleccionada.coordenadas, latitudeDelta: 0.06, longitudeDelta: 0.06 }}
-        showsUserLocation={vm.estado === 'conUbicacion'}
-        showsMyLocationButton={false}
-        toolbarEnabled={false}
-        onMapReady={() => setMapaListo(true)}
-        mapPadding={{ top: top + 70, right: 0, bottom: baseDelPanel + altoPanel, left: 0 }}
-      >
-        {vm.clinicas.map((clinica) => (
-          <Marker
-            key={clinica.id}
-            coordinate={clinica.coordenadas}
-            title={clinica.nombre}
-            description={clinica.distanciaTexto ? `A ${clinica.distanciaTexto}` : clinica.direccion}
-            onPress={() => alTocarMarcador(clinica)}
-            zIndex={clinica.id === vm.seleccionada.id ? 10 : clinica.tipo === 'propia' ? 5 : 1}
-          >
-            <Pin tipo={clinica.tipo} activo={clinica.id === vm.seleccionada.id} />
-          </Marker>
-        ))}
-      </MapView>
+      {MAPA_DISPONIBLE ? (
+        <MapView
+          ref={mapa}
+          style={StyleSheet.absoluteFill}
+          initialRegion={{ ...vm.seleccionada.coordenadas, latitudeDelta: 0.06, longitudeDelta: 0.06 }}
+          showsUserLocation={vm.estado === 'conUbicacion'}
+          showsMyLocationButton={false}
+          toolbarEnabled={false}
+          onMapReady={() => setMapaListo(true)}
+          mapPadding={{ top: top + 70, right: 0, bottom: baseDelPanel + altoPanel, left: 0 }}
+        >
+          {vm.clinicas.map((clinica) => (
+            <Marker
+              key={clinica.id}
+              coordinate={clinica.coordenadas}
+              title={clinica.nombre}
+              description={clinica.distanciaTexto ? `A ${clinica.distanciaTexto}` : clinica.direccion}
+              onPress={() => alTocarMarcador(clinica)}
+              zIndex={clinica.id === vm.seleccionada.id ? 10 : clinica.tipo === 'propia' ? 5 : 1}
+            >
+              <Pin tipo={clinica.tipo} activo={clinica.id === vm.seleccionada.id} />
+            </Marker>
+          ))}
+        </MapView>
+      ) : (
+        <SinMapa top={top} />
+      )}
 
       <View style={[styles.encabezado, { top: top + 10 }]} pointerEvents="box-none">
         <View style={[styles.chipTitulo, sombras.media]}>
@@ -185,6 +200,23 @@ export default function ClinicaScreen() {
           }
         />
       </Animated.View>
+    </View>
+  );
+}
+
+/** Fondo cuando el mapa no está disponible (APK sin clave de Google Maps). */
+function SinMapa({ top }: { top: number }) {
+  return (
+    <View style={[StyleSheet.absoluteFill, styles.sinMapa, { paddingTop: top + 90 }]}>
+      <View style={styles.iconoSinMapa}>
+        <IconoMapa size={30} color={colores.marea} />
+      </View>
+      <Texto variante="cuerpoFuerte" centrado>
+        El mapa se muestra en Expo Go
+      </Texto>
+      <Texto variante="secundario" color={colores.pizarra} centrado style={styles.textoSinMapa}>
+        Elige un lugar abajo y toca "Cómo llegar" para abrir la ruta en la app de mapas de tu teléfono.
+      </Texto>
     </View>
   );
 }
@@ -337,6 +369,17 @@ const styles = StyleSheet.create({
     borderRadius: radios.total,
     backgroundColor: 'rgba(255,255,255,0.95)',
   },
+  sinMapa: { alignItems: 'center', gap: 8, paddingHorizontal: 40, backgroundColor: colores.mareaSuave },
+  iconoSinMapa: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colores.blanco,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  textoSinMapa: { maxWidth: 300 },
   pin: { alignItems: 'center' },
   cabezaPin: { borderWidth: 3, borderColor: colores.blanco, alignItems: 'center', justifyContent: 'center' },
   pinActivo: { borderWidth: 4 },
